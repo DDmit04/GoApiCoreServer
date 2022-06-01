@@ -1,10 +1,8 @@
 package com.goapi.goapi.controller.form.user;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
-import java.util.AbstractMap;
 
 /**
  * @author Daniil Dmitrochenkov
@@ -17,5 +15,8 @@ public class RefreshTokensForm {
 
     public RefreshTokensForm(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public RefreshTokensForm() {
     }
 }

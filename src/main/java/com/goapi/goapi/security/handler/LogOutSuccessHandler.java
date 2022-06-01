@@ -1,10 +1,9 @@
 package com.goapi.goapi.security.handler;
 
-import com.goapi.goapi.service.UserService;
+import com.goapi.goapi.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 

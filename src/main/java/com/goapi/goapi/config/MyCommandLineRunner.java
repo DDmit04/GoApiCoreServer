@@ -1,6 +1,8 @@
 package com.goapi.goapi.config;
 
-import com.goapi.goapi.service.grpc.DiscoverServerHealthCheckService;
+import com.goapi.goapi.exception.DiscoverySererServiceConnectionException;
+import com.goapi.goapi.exception.DiscoverySererServiceIsOfflineException;
+import com.goapi.goapi.service.interfaces.grpc.DiscoverServerHealthCheckService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -20,13 +22,12 @@ public class MyCommandLineRunner implements CommandLineRunner {
             boolean serverAlive = true;
             try {
                 boolean databaseServiceIsAlive = discoverServerHealthCheckService.isDiscoverServiceServing();
-                boolean databaseStatsServiceIsAlive = discoverServerHealthCheckService.isDiscoverStatsServiceServing();
-                serverAlive = databaseServiceIsAlive && databaseStatsServiceIsAlive;
+                serverAlive = databaseServiceIsAlive;
             } catch (io.grpc.StatusRuntimeException e) {
-                serverAlive = false;
+                throw new DiscoverySererServiceConnectionException(e);
             }
-            if (!serverAlive) {
-                throw new RuntimeException();
+            if(serverAlive) {
+                throw new DiscoverySererServiceIsOfflineException();
             }
         }
     }

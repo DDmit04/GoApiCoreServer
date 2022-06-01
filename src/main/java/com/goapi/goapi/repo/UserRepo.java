@@ -1,6 +1,6 @@
 package com.goapi.goapi.repo;
 
-import com.goapi.goapi.domain.user.User;
+import com.goapi.goapi.domain.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

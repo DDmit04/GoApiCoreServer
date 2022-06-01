@@ -1,13 +1,14 @@
 package com.goapi.goapi.config;
 
-import com.goapi.goapi.security.auth.JwtAuthProvider;
-import com.goapi.goapi.security.handler.AuthSuccessfulHandler;
 import com.goapi.goapi.security.JwtUtils;
-import com.goapi.goapi.security.handler.LogOutSuccessHandler;
-import com.goapi.goapi.security.filter.UsernameEmailAuthFilter;
+import com.goapi.goapi.security.auth.JwtAuthProvider;
 import com.goapi.goapi.security.filter.JwtAuthFilter;
-import com.goapi.goapi.service.UserService;
+import com.goapi.goapi.security.filter.UsernameEmailAuthFilter;
+import com.goapi.goapi.security.handler.AuthSuccessfulHandler;
+import com.goapi.goapi.security.handler.LogOutSuccessHandler;
+import com.goapi.goapi.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * @author Daniil Dmitrochenkov
@@ -44,6 +44,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtAuthProvider jwtAuthProvider;
 
+    @Value("${my.url.login}")
+    private String loginUrl;
+
+    @Value("${my.url.logout}")
+    private String logoutUrl;
+
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
@@ -54,46 +60,50 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         FilterRegistrationBean<UsernamePasswordAuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
         UsernamePasswordAuthenticationFilter filter = new UsernameEmailAuthFilter(authenticationManagerBean());
         filter.setAuthenticationSuccessHandler(authSuccessfulHandler);
-        registrationBean.setFilter(filter);
-        return registrationBean;
-    }
-
-    @Bean
-    public FilterRegistrationBean<OncePerRequestFilter> jwtAuthFilter() throws Exception {
-        FilterRegistrationBean<OncePerRequestFilter> registrationBean = new FilterRegistrationBean<>();
-        JwtAuthFilter filter = new JwtAuthFilter(authenticationManagerBean(), jwtTokenUtil, env);
+        filter.setFilterProcessesUrl(loginUrl);
         registrationBean.setFilter(filter);
         return registrationBean;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        String authCookieName = env.getProperty("jwt.token.name.accessCookieName");
+        JwtAuthFilter jwtFilter = new JwtAuthFilter(authenticationManagerBean(), jwtTokenUtil, env);
+
+
         http.cors().and().csrf().disable();
 
         http.sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and();
 
-        http.authorizeRequests().antMatchers("/*").permitAll();
-        http.authorizeRequests().antMatchers("/user/account").authenticated();
-
-        http
-            .logout()
+        http.logout()
+            .logoutUrl(logoutUrl)
             .addLogoutHandler(logOutHandler)
             .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
-            .deleteCookies(env.getProperty("jwt.token.name.accessCookieName"), "JSESSIONID")
+            .deleteCookies(authCookieName, "JSESSIONID")
             .invalidateHttpSession(true)
-            .permitAll();
-
-        http.
-            addFilterBefore(
-                jwtAuthFilter().getFilter(),
+            .permitAll()
+            .and()
+            .addFilterBefore(
+                jwtFilter,
+                LogoutFilter.class
+            )
+            .authorizeRequests()
+            .antMatchers(loginUrl).permitAll()
+            .antMatchers("/db/**").permitAll()
+            .antMatchers("/api/**").permitAll()
+            .antMatchers("/jwt/**").permitAll()
+            .antMatchers("/user/**").authenticated()
+            .and()
+            .addFilterBefore(
+                jwtFilter,
                 UsernamePasswordAuthenticationFilter.class
-            );
-        http.addFilterBefore(
-            jwtAuthFilter().getFilter(),
-            LogoutFilter.class
-        );
+            )
+            .authorizeRequests()
+            .anyRequest().authenticated();
+
+
     }
 
     @Override

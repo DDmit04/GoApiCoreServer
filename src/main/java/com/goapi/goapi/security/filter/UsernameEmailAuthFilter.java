@@ -30,7 +30,6 @@ public class UsernameEmailAuthFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
         ObjectMapper mapper = new ObjectMapper();
         UserAuthForm userAuthForm;
         try {

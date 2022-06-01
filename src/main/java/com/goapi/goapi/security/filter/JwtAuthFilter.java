@@ -1,7 +1,7 @@
 package com.goapi.goapi.security.filter;
 
-import com.goapi.goapi.security.auth.JwtProvedAuthToken;
 import com.goapi.goapi.security.JwtUtils;
+import com.goapi.goapi.security.auth.JwtProvedAuthToken;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,7 +35,8 @@ public class JwtAuthFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = getAccessToken(request);
         String username = jwtTokenUtil.getTokenSubject(token);
-        if (!jwtTokenUtil.validateToken(token)) {
+        boolean tokenIsValid = jwtTokenUtil.validateToken(token);
+        if (!tokenIsValid) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -52,13 +53,17 @@ public class JwtAuthFilter extends BasicAuthenticationFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         final String token = getAccessToken(request);
-        return !StringUtils.hasText(token);
+        String loginUrl = env.getProperty("my.url.login");
+        String requestURI = request.getRequestURI();
+        boolean isLoginUrl = requestURI.startsWith(loginUrl);
+        return isLoginUrl || !StringUtils.hasText(token);
     }
 
     private String getAccessToken(HttpServletRequest request) {
+        String authCookieName = env.getProperty("jwt.token.name.accessCookieName");
         if(request.getCookies() != null) {
             Optional<String> refreshToken = Arrays.stream(request.getCookies())
-                .filter(c -> c.getName().equals(env.getProperty("jwt.token.name.accessCookieName")))
+                .filter(c -> c.getName().equals(authCookieName))
                 .map(c -> c.getValue())
                 .findFirst();
             return refreshToken.orElse("");

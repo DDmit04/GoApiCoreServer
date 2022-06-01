@@ -1,6 +1,6 @@
-insert into usr(id, email, money_amount, password, refresh_token_uuid, internal_username, username) VALUES
+insert into usr(id, email, money_amount, password, refresh_token_uuid, username) VALUES
 -- password - 123
-(1, 'testEmail', 0, '123', '03c55986-b8a6-11ec-b909-0242ac120002', '03c55986-b8a6-11ec-b909-0242ac120002', 'user');
+(1, 'testEmail', 0, '123', '03c55986-b8a6-11ec-b909-0242ac120002', 'user');
 
 insert into user_role(user_id, roles) VALUES (1, 'USER');
 

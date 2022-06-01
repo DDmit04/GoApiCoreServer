@@ -1,6 +1,6 @@
 package com.goapi.goapi.controller.form.api;
 
-import com.goapi.goapi.domain.api.request.RequestArgumentType;
+import com.goapi.goapi.domain.model.userApi.request.RequestArgumentType;
 import lombok.Getter;
 
 /**
