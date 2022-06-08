@@ -1,7 +1,10 @@
 package com.goapi.goapi.domain.model.user;
 
-import com.goapi.goapi.domain.model.Payment;
+import com.goapi.goapi.domain.model.bill.Bill;
 import com.goapi.goapi.domain.model.database.Database;
+import com.goapi.goapi.domain.model.payment.ExternalPayment;
+import com.goapi.goapi.domain.model.payment.InternalPayment;
+import com.goapi.goapi.domain.model.token.SecurityToken;
 import com.goapi.goapi.domain.model.userApi.UserApi;
 import com.goapi.goapi.domain.model.userApi.UserApiTariff;
 import lombok.Getter;
@@ -22,13 +25,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @author Daniil Dmitrochenkov
@@ -43,21 +46,16 @@ public class User implements UserDetails {
     private Integer id;
 
     @Column(unique = true)
-    @NotBlank(message = "dbUsername can't be blank!")
+    @NotBlank(message = "username can't be blank!")
     private String username;
-
     @NotBlank(message = "password can't be blank!")
-    private String password;
-
+    private String userPassword;
     @NotBlank(message = "email can't be blank!")
+    @Email
     @Column(unique = true)
     private String email;
-
     @Column
-    private UUID refreshTokenUuid;
-
-    @Column()
-    private BigDecimal moneyAmount = BigDecimal.valueOf(0);
+    private String jwtRefreshToken;
 
     @OneToMany(mappedBy = "owner", orphanRemoval = true)
     private Set<Database> databases = new LinkedHashSet<>();
@@ -80,6 +78,11 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
+    }
+
+    @Override
+    public String getPassword() {
+        return userPassword;
     }
 
     @Override
