@@ -14,8 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * @author Daniil Dmitrochenkov
@@ -53,21 +51,20 @@ public class JwtAuthFilter extends BasicAuthenticationFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         final String token = getAccessToken(request);
-        String loginUrl = env.getProperty("my.url.login");
+        String loginUrl = env.getProperty("urls.login");
         String requestURI = request.getRequestURI();
         boolean isLoginUrl = requestURI.startsWith(loginUrl);
         return isLoginUrl || !StringUtils.hasText(token);
     }
 
     private String getAccessToken(HttpServletRequest request) {
-        String authCookieName = env.getProperty("jwt.token.name.accessCookieName");
-        if(request.getCookies() != null) {
-            Optional<String> refreshToken = Arrays.stream(request.getCookies())
-                .filter(c -> c.getName().equals(authCookieName))
-                .map(c -> c.getValue())
-                .findFirst();
-            return refreshToken.orElse("");
+        String authHeaderName = env.getProperty("authorization.header");
+        String authHeaderPrefix = env.getProperty("authorization.prefix");
+        String authHeader = request.getHeader(authHeaderName);
+        if (authHeader == null) {
+            return "";
         }
-        return "";
+        String token = authHeader.replace(authHeaderPrefix, "");
+        return token;
     }
 }

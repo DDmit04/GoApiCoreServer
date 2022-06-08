@@ -1,6 +1,6 @@
 package com.goapi.goapi.security.handler;
 
-import com.goapi.goapi.service.interfaces.UserService;
+import com.goapi.goapi.service.interfaces.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +22,7 @@ public class LogOutSuccessHandler extends SecurityContextLogoutHandler {
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        userService.invalidateAccessToken(userDetails.getUsername());
+        userService.invalidateJwtRefreshToken(userDetails.getUsername());
         super.logout(request, response, authentication);
     }
 }

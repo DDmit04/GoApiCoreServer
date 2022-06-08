@@ -3,6 +3,7 @@ package com.goapi.goapi.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.security.JwtUtils;
+import com.goapi.goapi.service.interfaces.facase.user.UserServiceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -25,24 +26,35 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 @RequiredArgsConstructor
 public class AuthSuccessfulHandler implements AuthenticationSuccessHandler {
 
-    @Value("${jwt.token.name.refreshFiledName}")
-    private String refreshTokenFieldName;
-    @Value("${jwt.token.name.accessCookieName}")
+    @Value("${tokens.name.refresh}")
+    private String refreshTokenCookieName;
+    @Value("${tokens.name.access}")
     private String accessTokenCookieName;
+
+    @Value("${urls.jwr-refresh.path.final}")
+    private String refreshJwtUrl;
     private final JwtUtils jwtTokenUtil;
+
+    private final UserServiceFacade userServiceFacade;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
-        String refreshToken = jwtTokenUtil.generateRefreshToken(user.getRefreshTokenUuid().toString());
+        user = userServiceFacade.addRefreshJwtToken(user);
+
+        String jwtRefreshToken = user.getJwtRefreshToken();
+        String refreshToken = jwtTokenUtil.generateRefreshToken(jwtRefreshToken);
+        String accessToken = jwtTokenUtil.generateAccessToken(user.getUsername());
+
         ObjectMapper mapper = new ObjectMapper();
-        SimpleImmutableEntry<String, String> token = new SimpleImmutableEntry<>(refreshTokenFieldName, refreshToken);
+        SimpleImmutableEntry<String, String> token = new SimpleImmutableEntry<>(accessTokenCookieName, accessToken);
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(mapper.writeValueAsString(token));
 
-        String jwt = jwtTokenUtil.generateAccessToken(user.getUsername());
-        Cookie jwtTokenCookie = new Cookie(accessTokenCookieName, jwt);
+        Cookie jwtTokenCookie = new Cookie(refreshTokenCookieName, refreshToken);
         jwtTokenCookie.setHttpOnly(true);
+        jwtTokenCookie.setSecure(false);
+        jwtTokenCookie.setPath(refreshJwtUrl);
         response.addCookie(jwtTokenCookie);
     }
 }

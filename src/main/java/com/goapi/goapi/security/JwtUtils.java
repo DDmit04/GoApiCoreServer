@@ -13,15 +13,15 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    @Value("${jwt.secret}")
+    @Value("${authorization.jwt.secret}")
     private String jwtSecret;
-    @Value("${jwt.token.life.access}")
+    @Value("${tokens.life.access}")
     private int commonJwtLifetime;
-    @Value("${jwt.token.life.refresh}")
+    @Value("${tokens.life.refresh}")
     private int refreshJwtLifetime;
 
-    private String generateToken(String username, int minutes) {
-        Date date = Timestamp.valueOf(LocalDateTime.now().plusSeconds(minutes));
+    private String generateToken(String username, int seconds) {
+        Date date = Timestamp.valueOf(LocalDateTime.now().plusSeconds(seconds));
         return Jwts.builder()
                 .setSubject(username)
                 .setExpiration(date)
@@ -47,7 +47,10 @@ public class JwtUtils {
     }
 
     public String getTokenSubject(String token) {
-        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser()
+            .setSigningKey(jwtSecret)
+            .parseClaimsJws(token)
+            .getBody();
         return claims.getSubject();
     }
 }

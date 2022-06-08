@@ -1,7 +1,7 @@
 package com.goapi.goapi.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goapi.goapi.controller.form.user.UserAuthForm;
+import com.goapi.goapi.controller.forms.user.auth.UserAuthForm;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

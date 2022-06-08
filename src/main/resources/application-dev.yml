@@ -1,0 +1,21 @@
+tokens:
+  life:
+    access: 7776000
+    refresh: 7776000
+
+grpc:
+  checkAlive: false
+
+server:
+  error:
+    include-stacktrace: always
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  mail:
+    dev-mode: true
+    debug: true

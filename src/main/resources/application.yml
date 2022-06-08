@@ -1,0 +1,122 @@
+spring:
+  datasource:
+    password: ps
+    url: jdbc:postgresql://localhost/goapi
+    username: postgres
+  mail:
+    host: ${springMailHost:"none"}
+    username: ${springMailUsername:"none"}
+    password: ${springMailPassword:"none"}
+    port: 465
+    protocol: 'smtps'
+    dev-mode: true
+    debug: true
+    test-connection: true
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+  session:
+    jdbc:
+      initialize-schema: always
+      table-name: SPRING_SESSION
+
+email:
+  app-name:
+    param-name: appName
+    value: goApi service
+  template:
+    path: "templates/mail"
+    format: ".html"
+    encoding: "UTF-8"
+    mode: "HTML"
+    cache: false
+    name:
+      passwordReset: "passwordRecoverCode"
+      passwordChanged: "passwordChanged"
+      accountCreated: "accountCreated"
+      accountConfirmed: "accountConfirmed"
+      emailChange: "accountEmailChange"
+  localization:
+    #      matches with 'locales/mails', 'locales/mails_en' 'locales/mails_en_US' e.t.c
+    path: "locales/mails"
+    encoding: "UTF-8"
+    cacheSeconds: 0
+    names:
+      subject:
+        password-recover: locale.EmailSubject.passwordRecover
+        password-changed: locale.EmailSubject.passwordChanged
+        account-created: locale.EmailSubject.accountCreated
+        account-confirmed: locale.EmailSubject.accountConfirmed
+        email-change: locale.EmailSubject.emailChange
+
+authorization:
+  header: Authorization
+  prefix: Bearer
+  jwt:
+    secret: BAD_SECRET
+
+tokens:
+  life:
+    email: 36000
+    password: 36000
+    access: 36000
+    refresh: 7776000
+    email-change: 36000
+  name:
+    access: jwt
+    refresh: refresh
+
+grpc:
+  checkAlive: true
+  discover:
+    address: static://localhost:9090
+  client:
+    ExternalDatabaseGrpcService:
+      address: ${grpc.discover.address}
+      negotiationType: PLAINTEXT
+    ExternalDatabaseLocationGrpcService:
+      address: ${grpc.discover.address}
+      negotiationType: PLAINTEXT
+    grpcHealthService:
+      address: ${grpc.discover.address}
+      negotiationType: PLAINTEXT
+  names:
+    ExternalDatabaseGrpcService: com.discover.ExternalDatabaseService
+    ExternalDatabaseLocationGrpcService: com.discover.ExternalDatabaseServiceStats
+
+urls:
+  login: /login
+  logout: /logout
+  jwr-refresh:
+    path:
+      final: /jwt/refresh-jwt
+  email-confirm:
+    path:
+      start: /email/confirm
+      param-name:
+        confirm-code: code
+  email-change:
+    path:
+      start: /email/change
+      param-name:
+        confirm-code: code
+  password-reset:
+    path:
+      start: /password/reset
+      param-name:
+        confirm-code: code
+  api-request:
+    path:
+      start: api/request/do
+      param-name:
+        apiId: apiId
+        requestId: requestId
+
+server:
+  error:
+    include-message: always
+    include-stacktrace: never
