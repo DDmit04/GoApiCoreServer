@@ -5,6 +5,7 @@ import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.database.DatabaseStatsDto;
 import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
+import com.goapi.goapi.domain.model.bill.Bill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.database.DatabaseTariff;
 import com.goapi.goapi.domain.model.user.User;
@@ -16,7 +17,6 @@ import com.goapi.goapi.service.interfaces.grpc.ExternalDatabaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -55,14 +55,12 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public DatabaseDto createNewDatabase(User owner, DatabaseTariff tariff, CreateDatabaseForm dbForm) {
+    public DatabaseDto createNewDatabase(User owner, DatabaseTariff tariff, Bill databaseBill, CreateDatabaseForm dbForm) {
         String newPassword = UUID.randomUUID().toString();
         DatabaseType databaseType = dbForm.getDatabaseType();
         String externalName = dbForm.getDbName();
-        Date createdAt = new Date();
-        BigDecimal moneyAmount = BigDecimal.ZERO;
 
-        Database newDb = new Database(externalName, createdAt, newPassword, moneyAmount, databaseType, tariff, owner);
+        Database newDb = new Database(owner, databaseBill, externalName, newPassword, databaseType, tariff);
         newDb = databaseRepo.save(newDb);
 
         Integer newDbId = newDb.getId();
@@ -70,7 +68,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         DatabaseStatsDto databaseStatsDto = externalDatabaseService.createExternalDatabase(maxSizeBytes, databaseType, newDbId, newPassword);
         Database database = databaseRepo.save(newDb);
         newDbId = database.getId();
-        createdAt = database.getCreatedAt();
+        Date createdAt = database.getCreatedAt();
         databaseType = database.getDatabaseType();
         DatabaseDto databaseDto = new DatabaseDto(newDbId, externalName, createdAt, databaseType, databaseStatsDto);
         return databaseDto;

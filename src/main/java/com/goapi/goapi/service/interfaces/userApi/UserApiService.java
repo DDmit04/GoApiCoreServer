@@ -1,5 +1,6 @@
 package com.goapi.goapi.service.interfaces.userApi;
 
+import com.goapi.goapi.domain.model.bill.Bill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.userApi.UserApi;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserApiService {
-    UserApi createUserApi(String apiName, boolean isProtected, Database db, User user);
+    UserApi createUserApi(String apiName, boolean isProtected, Database db, User user, Bill userApiBill);
 
     Optional<UserApi> getUserApiById(Integer apiId);
 

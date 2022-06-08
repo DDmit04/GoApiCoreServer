@@ -1,5 +1,6 @@
 package com.goapi.goapi.service.implementation.userApi;
 
+import com.goapi.goapi.domain.model.bill.Bill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.userApi.UserApi;
@@ -25,14 +26,14 @@ public class UserApiServiceImpl implements UserApiService {
 
     private final UserApiRepository userApiRepository;
     @Override
-    public UserApi createUserApi(String apiName, boolean isProtected, Database db, User user) {
+    public UserApi createUserApi(String apiName, boolean isProtected, Database db, User user, Bill userApiBill) {
         UserApiTariff userApiTariff = user.getUserApiTariff();
         if(userApiTariff == null) {
             Integer userId = user.getId();
             throw new UserApiTariffChosenException(userId);
         }
         String apiKey = UUID.randomUUID().toString();
-        UserApi newUserApi = new UserApi(apiKey, isProtected, db, apiName, user);
+        UserApi newUserApi = new UserApi(apiKey, isProtected, db, apiName, user, userApiBill);
         newUserApi = userApiRepository.save(newUserApi);
         return newUserApi;
     }
@@ -76,7 +77,7 @@ public class UserApiServiceImpl implements UserApiService {
 
     @Override
     public boolean renameUserApi(UserApi userApi, String newUserApiName) {
-        userApi.setName(newUserApiName);
+        userApi.setUserApiName(newUserApiName);
         userApiRepository.save(userApi);
         return true;
     }

@@ -4,10 +4,12 @@ import com.goapi.goapi.controller.forms.api.CreateUserApiRequest;
 import com.goapi.goapi.domain.dto.api.SummaryUserApiDto;
 import com.goapi.goapi.domain.dto.api.UserApiDto;
 import com.goapi.goapi.domain.dto.api.UserApiRequestDto;
+import com.goapi.goapi.domain.model.bill.Bill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.userApi.UserApi;
 import com.goapi.goapi.exception.database.DatabaseNotFoundException;
+import com.goapi.goapi.service.implementation.BillService;
 import com.goapi.goapi.service.interfaces.database.DatabaseService;
 import com.goapi.goapi.service.interfaces.facase.userApi.UserApiServiceFacade;
 import com.goapi.goapi.service.interfaces.userApi.UserApiRequestService;
@@ -31,6 +33,8 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
     private final DatabaseService databaseService;
     private final UserApiRequestService userApiRequestService;
 
+    private final BillService billService;
+
 
     @Override
     public SummaryUserApiDto createApi(User user, CreateUserApiRequest createUserApiRequest) {
@@ -39,8 +43,9 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
         return databaseOptional.map(database -> {
             boolean isProtected = createUserApiRequest.isProtected();
             String userApiName = createUserApiRequest.getName();
-            UserApi userApi = userApiService.createUserApi(userApiName, isProtected, database, user);
-            userApiName = userApi.getName();
+            Bill userApiBill = billService.createUserApiBill(user);
+            UserApi userApi = userApiService.createUserApi(userApiName, isProtected, database, user, userApiBill);
+            userApiName = userApi.getUserApiName();
             isProtected = userApi.isProtected();
             Integer apiId = userApi.getId();
             int requestsCount = userApi.getUserApiRequests().size();
@@ -80,7 +85,7 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
             .map(api -> {
                 Integer apiId = api.getId();
                 boolean isProtected = api.isProtected();
-                String name = api.getName();
+                String name = api.getUserApiName();
                 int requestsCount = api.getUserApiRequests().size();
                 return new SummaryUserApiDto(apiId, isProtected, name, requestsCount);
             })
@@ -111,7 +116,7 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
             .collect(Collectors.toList());
         Integer userApiId = user.getId();
         boolean isUserApiProtected = userApi.isProtected();
-        String userApiName = userApi.getName();
+        String userApiName = userApi.getUserApiName();
         UserApiDto userApiDto = new UserApiDto(userApiId, isUserApiProtected, userApiName, requestDtoList);
         return userApiDto;
     }

@@ -2,9 +2,11 @@ package com.goapi.goapi.service.implementation.facase.user;
 
 import com.goapi.goapi.controller.forms.user.UserRegForm;
 import com.goapi.goapi.controller.forms.user.auth.UserAuthInfo;
+import com.goapi.goapi.domain.model.bill.Bill;
 import com.goapi.goapi.domain.model.token.SecurityToken;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.security.JwtUtils;
+import com.goapi.goapi.service.implementation.BillService;
 import com.goapi.goapi.service.interfaces.SecurityTokenService;
 import com.goapi.goapi.service.interfaces.facase.user.UserServiceFacade;
 import com.goapi.goapi.service.interfaces.mail.MailService;
@@ -25,12 +27,13 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
     private final MailService mailService;
     private final UserService userService;
     private final JwtUtils jwtTokenUtil;
-
     private final SecurityTokenService securityTokenService;
+    private final BillService billService;
 
     @Override
     public User createNewUser(UserRegForm userRegForm) {
-        User user = userService.addNewUser(userRegForm);
+        Bill userBill = billService.createUserBill();
+        User user = userService.addNewUser(userRegForm, userBill);
         SecurityToken newEmailConfirmToken = securityTokenService.createNewEmailConfirmToken(user);
         String tokenString = newEmailConfirmToken.getToken();
         mailService.sendEmailConfirmCode(user, tokenString);

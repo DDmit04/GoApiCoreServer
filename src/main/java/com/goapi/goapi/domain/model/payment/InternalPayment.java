@@ -1,6 +1,6 @@
 package com.goapi.goapi.domain.model.payment;
 
-import com.goapi.goapi.domain.model.user.User;
+import com.goapi.goapi.domain.model.bill.Bill;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
@@ -19,9 +19,14 @@ import java.util.Objects;
 @Setter
 @Entity
 public class InternalPayment extends Payment {
+
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "from_bill_id")
+    private Bill fromBill;
+
+    @ManyToOne
+    @JoinColumn(name = "to_bill_id")
+    private Bill toBill;
 
     @Override
     public boolean equals(Object o) {

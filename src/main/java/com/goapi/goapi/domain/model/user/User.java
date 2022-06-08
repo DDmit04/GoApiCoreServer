@@ -1,8 +1,7 @@
 package com.goapi.goapi.domain.model.user;
 
+import com.goapi.goapi.domain.model.bill.Bill;
 import com.goapi.goapi.domain.model.database.Database;
-import com.goapi.goapi.domain.model.payment.ExternalPayment;
-import com.goapi.goapi.domain.model.payment.InternalPayment;
 import com.goapi.goapi.domain.model.token.SecurityToken;
 import com.goapi.goapi.domain.model.userApi.UserApi;
 import com.goapi.goapi.domain.model.userApi.UserApiTariff;
@@ -24,10 +23,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -55,8 +54,6 @@ public class User implements UserDetails {
     private String email;
     @Column
     private String jwtRefreshToken;
-    @Column
-    private BigDecimal moneyAmount = BigDecimal.valueOf(0);
 
     @OneToMany(mappedBy = "owner", orphanRemoval = true)
     private Set<Database> databases = new LinkedHashSet<>();
@@ -79,12 +76,20 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private Set<SecurityToken> securityTokens = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private Set<InternalPayment> internalPayments = new LinkedHashSet<>();
+    @OneToOne(orphanRemoval = false)
+    @JoinColumn(name = "bill_id")
+    private Bill userBill;
 
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn(name = "user_id")
-    private Set<ExternalPayment> externalPayments = new LinkedHashSet<>();
+    public User(String username, String userPassword, String email, Set<UserRoles> roles, Bill userBill) {
+        this.username = username;
+        this.userPassword = userPassword;
+        this.email = email;
+        this.roles = roles;
+        this.userBill = userBill;
+    }
+
+    public User() {
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

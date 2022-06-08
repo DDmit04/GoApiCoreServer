@@ -3,10 +3,12 @@ package com.goapi.goapi.service.implementation.facase.database;
 import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.database.DatabaseStatsDto;
+import com.goapi.goapi.domain.model.bill.Bill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.database.DatabaseTariff;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.exception.tariff.database.DatabaseTariffNotFoundException;
+import com.goapi.goapi.service.implementation.BillService;
 import com.goapi.goapi.service.interfaces.database.DatabaseService;
 import com.goapi.goapi.service.interfaces.database.DatabaseTariffService;
 import com.goapi.goapi.service.interfaces.facase.database.DatabaseServiceFacade;
@@ -26,13 +28,15 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
     private final DatabaseService databaseService;
     private final DatabaseTariffService databaseTariffService;
     private final ExternalDatabaseService externalDatabaseService;
+    private final BillService billService;
 
     @Override
     public DatabaseDto createNewDatabase(User owner, CreateDatabaseForm dbForm) {
         Integer tariffId = dbForm.getTariffId();
         Optional<DatabaseTariff> tariffOptional = databaseTariffService.getDatabaseTariffById(tariffId);
         return tariffOptional.map(tariff -> {
-            DatabaseDto databaseDto = databaseService.createNewDatabase(owner, tariff, dbForm);
+            Bill databaseBill = billService.createDatabaseBill(owner);
+            DatabaseDto databaseDto = databaseService.createNewDatabase(owner, tariff, databaseBill, dbForm);
             return databaseDto;
         }).orElseThrow(() -> new DatabaseTariffNotFoundException(tariffId));
     }
