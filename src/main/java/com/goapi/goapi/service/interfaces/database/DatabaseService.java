@@ -1,6 +1,6 @@
 package com.goapi.goapi.service.interfaces.database;
 
-import com.goapi.goapi.controller.form.database.CreateDatabaseForm;
+import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
 import com.goapi.goapi.domain.model.database.Database;

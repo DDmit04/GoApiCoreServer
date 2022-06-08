@@ -70,7 +70,7 @@ public class UserApiServiceImpl implements UserApiService {
     }
 
     @Override
-    public int getTotalUserApiRequestsCount(Integer userId) {
+    public int getTotalUserApisRequestsCount(Integer userId) {
         return userApiRepository.getTotalUserApiRequestsCount(userId);
     }
 

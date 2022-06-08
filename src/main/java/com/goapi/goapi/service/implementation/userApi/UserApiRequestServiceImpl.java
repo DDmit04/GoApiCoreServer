@@ -1,5 +1,6 @@
 package com.goapi.goapi.service.implementation.userApi;
 
+import com.goapi.goapi.UrlUtils;
 import com.goapi.goapi.domain.model.userApi.UserApi;
 import com.goapi.goapi.domain.model.userApi.request.UserApiRequest;
 import com.goapi.goapi.repo.userApi.ApiRequestRepository;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +22,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserApiRequestServiceImpl implements UserApiRequestService {
 
-    @Value("${my.url.request}")
+    @Value("${urls.api-request.path.start}")
     private String doRequestUrl;
-    @Value("${my.url.request.apiIdPathParamName}")
+    @Value("${urls.api-request.path.param-name.apiId}")
     private String apiIdParamName;
-    @Value("${my.url.request.requestIdPathParamName}")
+    @Value("${urls.api-request.path.param-name.requestId}")
     private String requestIdParamName;
     private final ApiRequestRepository apiRequestRepository;
 
@@ -65,14 +65,11 @@ public class UserApiRequestServiceImpl implements UserApiRequestService {
         UserApi userApi = userApiRequest.getUserApi();
         Integer userApiId = userApi.getId();
         Integer requestId = userApiRequest.getId();
-        Map<String, Object> urlParams = new HashMap<>(){{
-            put(apiIdParamName, userApiId);
-            put(requestIdParamName, requestId);
+        Map<String, String> params = new HashMap<>(){{
+            put(apiIdParamName, userApiId.toString());
+            put(requestIdParamName, requestId.toString());
         }};
-        String finalUrl = UriComponentsBuilder
-            .fromUriString(doRequestUrl)
-            .buildAndExpand(urlParams)
-            .toString();
+        String finalUrl = UrlUtils.addQueryParamsToUrl(doRequestUrl, params);
         return finalUrl;
     }
 

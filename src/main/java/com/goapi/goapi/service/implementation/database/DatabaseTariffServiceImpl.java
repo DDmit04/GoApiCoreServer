@@ -31,7 +31,7 @@ public class DatabaseTariffServiceImpl implements DatabaseTariffService {
         List<DatabaseTariffDto> databaseTariffDtoList = databaseTariffs.stream()
             .map(tariff -> new DatabaseTariffDto(
                 tariff.getId(),
-                tariff.getName(),
+                tariff.getTariff_name(),
                 tariff.getCostPerMonth(),
                 tariff.getMaxSizeBytes())
             )

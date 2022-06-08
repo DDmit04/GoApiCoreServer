@@ -1,7 +1,7 @@
 package com.goapi.goapi.service.implementation.database;
 
 import com.example.DatabaseType;
-import com.goapi.goapi.controller.form.database.CreateDatabaseForm;
+import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.database.DatabaseStatsDto;
 import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
@@ -46,7 +46,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             .stream()
             .map(database -> new SummaryDatabaseDto(
                 database.getId(),
-                database.getName(),
+                database.getDatabaseName(),
                 database.getCreatedAt(),
                 database.getDatabaseType())
             )
@@ -94,7 +94,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         DatabaseStatsDto databaseStatsDto = externalDatabaseService.resetExternalDatabase(dbId, newPassword);
         DatabaseDto newInfo = new DatabaseDto(
             dbId,
-            database.getName(),
+            database.getDatabaseName(),
             database.getCreatedAt(),
             database.getDatabaseType(),
             databaseStatsDto
@@ -109,7 +109,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         Integer dbId = database.getId();
         passwordUpdated = externalDatabaseService.updateExternalDatabasePassword(dbId, newPassword);
         if (passwordUpdated) {
-            database.setPassword(newPassword);
+            database.setDatabasePassword(newPassword);
             databaseRepo.save(database);
         }
         return passwordUpdated;
@@ -141,7 +141,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public boolean renameDatabase(Database db, String newDatabaseName) {
-        db.setName(newDatabaseName);
+        db.setDatabaseName(newDatabaseName);
         databaseRepo.save(db);
         return true;
     }

@@ -1,6 +1,5 @@
 package com.goapi.goapi.domain.model.user;
 
-import com.goapi.goapi.domain.model.bill.Bill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.payment.ExternalPayment;
 import com.goapi.goapi.domain.model.payment.InternalPayment;
@@ -25,10 +24,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -56,12 +55,11 @@ public class User implements UserDetails {
     private String email;
     @Column
     private String jwtRefreshToken;
+    @Column
+    private BigDecimal moneyAmount = BigDecimal.valueOf(0);
 
     @OneToMany(mappedBy = "owner", orphanRemoval = true)
     private Set<Database> databases = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "user")
-    private Set<Payment> payments = new LinkedHashSet<>();
 
     @ElementCollection(targetClass = UserRoles.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
@@ -74,6 +72,19 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "user_api_tariff_id")
     private UserApiTariff userApiTariff;
+
+    @Column(name = "is_email_confirmed")
+    private boolean isEmailConfirmed;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private Set<SecurityToken> securityTokens = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private Set<InternalPayment> internalPayments = new LinkedHashSet<>();
+
+    @OneToMany(orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    private Set<ExternalPayment> externalPayments = new LinkedHashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,7 +1,7 @@
 package com.goapi.goapi.domain.model.database;
 
 import com.example.DatabaseType;
-import com.goapi.goapi.domain.model.Payment;
+import com.goapi.goapi.domain.model.payment.Payment;
 import com.goapi.goapi.domain.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,14 +38,14 @@ public class Database {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotBlank(message = "db name can't be blank!")
-    private String name;
+    private String databaseName;
     @NotNull(message = "db creation time can't be null!")
     private Date createdAt;
 
     @ColumnTransformer(
         read = """
             pgp_sym_decrypt(
-                password,
+                database_password,
                 current_setting('encrypt.key')
             )
             """,
@@ -58,7 +58,7 @@ public class Database {
     )
     @NotBlank(message = "db password can't be blank!")
     @Column(columnDefinition = "bytea")
-    private String password;
+    private String databasePassword;
     @Column
     private BigDecimal moneyAmount = BigDecimal.valueOf(0);
     @Enumerated(EnumType.STRING)
@@ -76,10 +76,10 @@ public class Database {
         inverseJoinColumns = @JoinColumn(name = "payments_id"))
     private Set<Payment> payments = new LinkedHashSet<>();
 
-    public Database(String name, Date createdAt, String password, BigDecimal moneyAmount, DatabaseType databaseType, DatabaseTariff dbTariff, User owner) {
-        this.name = name;
+    public Database(String databaseName, Date createdAt, String databasePassword, BigDecimal moneyAmount, DatabaseType databaseType, DatabaseTariff dbTariff, User owner) {
+        this.databaseName = databaseName;
         this.createdAt = createdAt;
-        this.password = password;
+        this.databasePassword = databasePassword;
         this.moneyAmount = moneyAmount;
         this.databaseType = databaseType;
         this.dbTariff = dbTariff;

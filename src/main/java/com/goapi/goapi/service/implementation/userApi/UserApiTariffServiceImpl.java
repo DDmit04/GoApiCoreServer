@@ -31,7 +31,7 @@ public class UserApiTariffServiceImpl implements UserApiTariffService {
         List<UserApiTariffDto> userApiTariffDtoList = userApiTariffs.stream()
             .map(tariff -> new UserApiTariffDto(
                 tariff.getId(),
-                tariff.getName(),
+                tariff.getTariff_name(),
                 tariff.getCostPerMonth(),
                 tariff.getMaxRequestsCount())
             )

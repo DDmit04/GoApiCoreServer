@@ -16,12 +16,12 @@ import java.math.BigDecimal;
 @MappedSuperclass
 @Getter
 @Setter
-public class Tariff {
+public abstract class Tariff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(nullable = false)
-    private String name;
+    private String tariff_name;
     @Column(columnDefinition = "decimal default 0")
     private BigDecimal costPerMonth;
 }

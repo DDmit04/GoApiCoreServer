@@ -21,7 +21,7 @@ public interface UserApiService {
     List<UserApi> getUserApisByUserId(Integer userId);
 
 
-    int getTotalUserApiRequestsCount(Integer userId);
+    int getTotalUserApisRequestsCount(Integer userId);
 
     boolean renameUserApi(UserApi userApi, String newUserApiName);
 

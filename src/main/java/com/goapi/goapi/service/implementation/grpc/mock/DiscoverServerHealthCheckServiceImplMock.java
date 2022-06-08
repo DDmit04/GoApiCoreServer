@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Profile("dev")
 public class DiscoverServerHealthCheckServiceImplMock implements DiscoverServerHealthCheckService {
 
-    @Value("${my.grpc.client.names.ExternalDatabaseGrpcService}")
+    @Value("${grpc.names.ExternalDatabaseGrpcService}")
     private String databaseServerServiceName;
 
     @Override

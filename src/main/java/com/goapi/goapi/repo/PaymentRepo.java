@@ -1,6 +1,6 @@
 package com.goapi.goapi.repo;
 
-import com.goapi.goapi.domain.model.Payment;
+import com.goapi.goapi.domain.model.payment.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.goapi.goapi.service.implementation.userApi;
 
-import com.goapi.goapi.controller.form.api.CreateApiRequestArgument;
+import com.goapi.goapi.controller.forms.api.CreateApiRequestArgument;
 import com.goapi.goapi.domain.model.userApi.request.UserApiRequest;
 import com.goapi.goapi.domain.model.userApi.request.UserApiRequestArgument;
 import com.goapi.goapi.repo.userApi.ApiRequestArgumentRepository;

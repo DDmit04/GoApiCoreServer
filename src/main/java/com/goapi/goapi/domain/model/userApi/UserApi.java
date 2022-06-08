@@ -1,7 +1,7 @@
 package com.goapi.goapi.domain.model.userApi;
 
-import com.goapi.goapi.domain.model.Payment;
 import com.goapi.goapi.domain.model.database.Database;
+import com.goapi.goapi.domain.model.payment.Payment;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.userApi.request.UserApiRequest;
 import lombok.Getter;

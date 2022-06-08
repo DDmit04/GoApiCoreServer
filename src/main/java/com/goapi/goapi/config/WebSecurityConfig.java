@@ -6,7 +6,7 @@ import com.goapi.goapi.security.filter.JwtAuthFilter;
 import com.goapi.goapi.security.filter.UsernameEmailAuthFilter;
 import com.goapi.goapi.security.handler.AuthSuccessfulHandler;
 import com.goapi.goapi.security.handler.LogOutSuccessHandler;
-import com.goapi.goapi.service.interfaces.UserService;
+import com.goapi.goapi.service.interfaces.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -44,11 +44,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtAuthProvider jwtAuthProvider;
 
-    @Value("${my.url.login}")
+    @Value("${urls.login}")
     private String loginUrl;
 
-    @Value("${my.url.logout}")
+    @Value("${urls.logout}")
     private String logoutUrl;
+
+    @Value("${tokens.name.refresh}")
+    private String refreshTokenCookieName;
 
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -67,9 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String authCookieName = env.getProperty("jwt.token.name.accessCookieName");
         JwtAuthFilter jwtFilter = new JwtAuthFilter(authenticationManagerBean(), jwtTokenUtil, env);
-
 
         http.cors().and().csrf().disable();
 
@@ -81,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .logoutUrl(logoutUrl)
             .addLogoutHandler(logOutHandler)
             .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
-            .deleteCookies(authCookieName, "JSESSIONID")
+            .deleteCookies(refreshTokenCookieName, "JSESSIONID")
             .invalidateHttpSession(true)
             .permitAll()
             .and()
@@ -94,6 +95,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/db/**").permitAll()
             .antMatchers("/api/**").permitAll()
             .antMatchers("/jwt/**").permitAll()
+            .antMatchers("/anon/**").permitAll()
             .antMatchers("/user/**").authenticated()
             .and()
             .addFilterBefore(
