@@ -3,11 +3,10 @@ package com.goapi.goapi.service.implementation.facase.database;
 import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.database.DatabaseStatsDto;
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.database.DatabaseTariff;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.exception.tariff.database.DatabaseTariffNotFoundException;
 import com.goapi.goapi.service.implementation.BillService;
 import com.goapi.goapi.service.interfaces.database.DatabaseService;
 import com.goapi.goapi.service.interfaces.database.DatabaseTariffService;
@@ -15,8 +14,6 @@ import com.goapi.goapi.service.interfaces.facase.database.DatabaseServiceFacade;
 import com.goapi.goapi.service.interfaces.grpc.ExternalDatabaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * @author Daniil Dmitrochenkov
@@ -33,17 +30,15 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
     @Override
     public DatabaseDto createNewDatabase(User owner, CreateDatabaseForm dbForm) {
         Integer tariffId = dbForm.getTariffId();
-        Optional<DatabaseTariff> tariffOptional = databaseTariffService.getDatabaseTariffById(tariffId);
-        return tariffOptional.map(tariff -> {
-            Bill databaseBill = billService.createDatabaseBill(owner);
-            DatabaseDto databaseDto = databaseService.createNewDatabase(owner, tariff, databaseBill, dbForm);
-            return databaseDto;
-        }).orElseThrow(() -> new DatabaseTariffNotFoundException(tariffId));
+        DatabaseTariff tariff = databaseTariffService.getDatabaseTariffById(tariffId);
+        AppServiceBill databaseAppServiceBill = billService.createDatabaseBill(owner);
+        DatabaseDto databaseDto = databaseService.createNewDatabase(owner, tariff, databaseAppServiceBill, dbForm);
+        return databaseDto;
     }
 
     @Override
     public DatabaseDto getDatabaseInfo(User user, Integer dbId) {
-        Database db = databaseService.getDatabaseCheckOwner(user, dbId);
+        Database db = getDatabaseCheckOwner(user, dbId);
         DatabaseStatsDto databaseStatsDto = externalDatabaseService.getDatabaseStats(dbId);
         return new DatabaseDto(
             db.getId(),
@@ -56,35 +51,48 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
 
     @Override
     public String getDatabasePassword(User user, Integer dbId) {
-        Database db = databaseService.getDatabaseCheckOwner(user, dbId);
+        Database db = getDatabaseCheckOwner(user, dbId);
         return db.getDatabasePassword();
     }
 
     @Override
     public boolean generateNewDbPassword(User user, Integer dbId) {
-        Database db = databaseService.getDatabaseCheckOwner(user, dbId);
+        Database db = getDatabaseCheckOwner(user, dbId);
         return databaseService.generateNewDbPassword(db);
     }
 
     @Override
     public DatabaseDto resetDatabase(User user, Integer dbId) {
-        Database db = databaseService.getDatabaseCheckOwner(user, dbId);
+        Database db = getDatabaseCheckOwner(user, dbId);
         DatabaseDto resetDatabaseDto = databaseService.resetDatabase(db);
         return resetDatabaseDto;
     }
 
     @Override
     public boolean deleteDatabase(User user, Integer dbId) {
-        Database db = databaseService.getDatabaseCheckOwner(user, dbId);
+        Database db = getDatabaseCheckOwner(user, dbId);
         boolean deleted = databaseService.deleteDatabase(db);
         return deleted;
     }
 
     @Override
     public boolean renameDatabase(User user, Integer dbId, String newDatabaseName) {
-        Database db = databaseService.getDatabaseCheckOwner(user, dbId);
+        Database db = getDatabaseCheckOwner(user, dbId);
         boolean renamed = databaseService.renameDatabase(db, newDatabaseName);
         return renamed;
+    }
+
+    public AppServiceBill getDatabaseBill(User user, Integer dbId) {
+        //TODO entity graph load bill
+        Database db = getDatabaseCheckOwner(user, dbId);
+        AppServiceBill appServiceBill = db.getAppServiceBill();
+        return appServiceBill;
+    }
+
+    private Database getDatabaseCheckOwner(User user, Integer dbId) {
+        Database db = databaseService.getDatabaseById(dbId);
+        databaseService.isDatabaseOwnerOrThrow(user, db);
+        return db;
     }
 
 }

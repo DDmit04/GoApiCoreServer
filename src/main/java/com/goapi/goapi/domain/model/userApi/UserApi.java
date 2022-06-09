@@ -1,7 +1,7 @@
 package com.goapi.goapi.domain.model.userApi;
 
 import com.goapi.goapi.domain.model.AppServiceObject;
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.userApi.request.UserApiRequest;
@@ -41,8 +41,8 @@ public class UserApi extends AppServiceObject {
     @OneToMany(mappedBy = "userApi", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private Set<UserApiRequest> userApiRequests = new LinkedHashSet<>();
 
-    public UserApi(String apiKey, boolean isProtected, Database database, String userApiName, User owner, Bill bill) {
-        super(owner, bill);
+    public UserApi(String apiKey, boolean isProtected, Database database, String userApiName, User owner, AppServiceBill appServiceBill) {
+        super(owner, appServiceBill);
         this.apiKey = apiKey;
         this.isProtected = isProtected;
         this.database = database;

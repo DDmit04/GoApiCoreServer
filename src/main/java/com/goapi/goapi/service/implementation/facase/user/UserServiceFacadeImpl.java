@@ -2,7 +2,7 @@ package com.goapi.goapi.service.implementation.facase.user;
 
 import com.goapi.goapi.controller.forms.user.UserRegForm;
 import com.goapi.goapi.controller.forms.user.auth.UserAuthInfo;
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.UserBill;
 import com.goapi.goapi.domain.model.token.SecurityToken;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.security.JwtUtils;
@@ -32,7 +32,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
     @Override
     public User createNewUser(UserRegForm userRegForm) {
-        Bill userBill = billService.createUserBill();
+        UserBill userBill = billService.createUserBill();
         User user = userService.addNewUser(userRegForm, userBill);
         SecurityToken newEmailConfirmToken = securityTokenService.createNewEmailConfirmToken(user);
         String tokenString = newEmailConfirmToken.getToken();

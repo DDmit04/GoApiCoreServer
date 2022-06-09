@@ -1,6 +1,6 @@
 package com.goapi.goapi.domain.model.user;
 
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.UserBill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.token.SecurityToken;
 import com.goapi.goapi.domain.model.userApi.UserApi;
@@ -78,9 +78,9 @@ public class User implements UserDetails {
 
     @OneToOne(orphanRemoval = false)
     @JoinColumn(name = "bill_id")
-    private Bill userBill;
+    private UserBill userBill;
 
-    public User(String username, String userPassword, String email, Set<UserRoles> roles, Bill userBill) {
+    public User(String username, String userPassword, String email, Set<UserRoles> roles, UserBill userBill) {
         this.username = username;
         this.userPassword = userPassword;
         this.email = email;

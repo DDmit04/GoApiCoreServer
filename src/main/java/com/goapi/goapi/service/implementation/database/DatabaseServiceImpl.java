@@ -5,7 +5,7 @@ import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.database.DatabaseStatsDto;
 import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.database.DatabaseTariff;
 import com.goapi.goapi.domain.model.user.User;
@@ -35,13 +35,15 @@ public class DatabaseServiceImpl implements DatabaseService {
     private final DatabaseRepo databaseRepo;
 
     @Override
-    public Optional<Database> getDatabaseById(Integer id) {
-        return databaseRepo.findById(id);
+    public Database getDatabaseById(Integer dbId) {
+        Optional<Database> databaseOptional = databaseRepo.findById(dbId);
+        return databaseOptional.orElseThrow(() -> new DatabaseNotFoundException(dbId));
     }
 
     @Override
     public List<SummaryDatabaseDto> listUserDatabases(User user) {
-        List<Database> databases = databaseRepo.findAllByOwnerId(user.getId());
+        Integer userId = user.getId();
+        List<Database> databases = databaseRepo.findAllByOwnerId(userId);
         List<SummaryDatabaseDto> summaryDatabaseDtoList = databases
             .stream()
             .map(database -> new SummaryDatabaseDto(
@@ -55,12 +57,12 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public DatabaseDto createNewDatabase(User owner, DatabaseTariff tariff, Bill databaseBill, CreateDatabaseForm dbForm) {
+    public DatabaseDto createNewDatabase(User owner, DatabaseTariff tariff, AppServiceBill databaseAppServiceBill, CreateDatabaseForm dbForm) {
         String newPassword = UUID.randomUUID().toString();
         DatabaseType databaseType = dbForm.getDatabaseType();
         String externalName = dbForm.getDbName();
 
-        Database newDb = new Database(owner, databaseBill, externalName, newPassword, databaseType, tariff);
+        Database newDb = new Database(owner, databaseAppServiceBill, externalName, newPassword, databaseType, tariff);
         newDb = databaseRepo.save(newDb);
 
         Integer newDbId = newDb.getId();
@@ -120,15 +122,6 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public Database getDatabaseCheckOwner(User user, Integer dbId) {
-        Optional<Database> databaseOptional = getDatabaseById(dbId);
-        return databaseOptional.map(db -> {
-            isDatabaseOwnerOrThrow(user, db);
-            return db;
-        }).orElseThrow(() -> new DatabaseNotFoundException(dbId));
-    }
-
-    @Override
     public boolean isDatabaseOwnerOrThrow(User user, Database database) {
         boolean isOwner = database.getOwner().equals(user);
         if (isOwner) {
@@ -143,4 +136,5 @@ public class DatabaseServiceImpl implements DatabaseService {
         databaseRepo.save(db);
         return true;
     }
+
 }

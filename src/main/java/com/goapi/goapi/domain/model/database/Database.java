@@ -2,7 +2,7 @@ package com.goapi.goapi.domain.model.database;
 
 import com.example.DatabaseType;
 import com.goapi.goapi.domain.model.AppServiceObject;
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,8 +50,8 @@ public class Database extends AppServiceObject {
     @JoinColumn(name = "tariff_id")
     private DatabaseTariff dbTariff;
 
-    public Database(User owner, Bill bill, String databaseName, String databasePassword, DatabaseType databaseType, DatabaseTariff dbTariff) {
-        super(owner, bill);
+    public Database(User owner, AppServiceBill appServiceBill, String databaseName, String databasePassword, DatabaseType databaseType, DatabaseTariff dbTariff) {
+        super(owner, appServiceBill);
         this.databaseName = databaseName;
         this.databasePassword = databasePassword;
         this.databaseType = databaseType;

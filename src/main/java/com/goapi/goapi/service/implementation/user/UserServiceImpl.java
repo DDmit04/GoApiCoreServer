@@ -2,7 +2,7 @@ package com.goapi.goapi.service.implementation.user;
 
 import com.goapi.goapi.controller.forms.user.UserRegForm;
 import com.goapi.goapi.controller.forms.user.auth.UserAuthInfo;
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.UserBill;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.user.UserRoles;
 import com.goapi.goapi.domain.model.userApi.UserApiTariff;
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     private final JwtUtils jwtTokenUtil;
 
     @Override
-    public User addNewUser(UserRegForm userRegForm, Bill userBill) {
+    public User addNewUser(UserRegForm userRegForm, UserBill userAppServiceBill) {
         String username = userRegForm.getUsername();
         String email = userRegForm.getEmail();
         String password = userRegForm.getPassword();
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
         if (!userOptional.isPresent()) {
             String encodedPassword = passwordEncoder.encode(password);
             Set<UserRoles> userRoles = Collections.singleton(UserRoles.USER);
-            User newUser = new User(username, encodedPassword, email, userRoles, userBill);
+            User newUser = new User(username, encodedPassword, email, userRoles, userAppServiceBill);
             UUID jwtRefreshTokenUuid = UUID.randomUUID();
             newUser = addJwtRefreshToken(newUser, jwtRefreshTokenUuid.toString());
             return newUser;

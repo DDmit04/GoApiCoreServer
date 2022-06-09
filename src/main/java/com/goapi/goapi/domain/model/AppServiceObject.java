@@ -1,6 +1,6 @@
 package com.goapi.goapi.domain.model;
 
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,14 +34,14 @@ public class AppServiceObject {
 
     @OneToOne(orphanRemoval = false)
     @JoinColumn(name = "bill_id")
-    private Bill bill;
+    private AppServiceBill appServiceBill;
 
     public AppServiceObject() {
     }
 
-    public AppServiceObject(User owner, Bill bill) {
+    public AppServiceObject(User owner, AppServiceBill appServiceBill) {
         this.createdAt = new Date();
         this.owner = owner;
-        this.bill = bill;
+        this.appServiceBill = appServiceBill;
     }
 }

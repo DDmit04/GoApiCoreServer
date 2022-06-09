@@ -2,7 +2,7 @@ package com.goapi.goapi.service.interfaces.user;
 
 import com.goapi.goapi.controller.forms.user.UserRegForm;
 import com.goapi.goapi.controller.forms.user.auth.UserAuthInfo;
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.UserBill;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.userApi.UserApiTariff;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public interface UserService extends UserDetailsService {
 
-    User addNewUser(UserRegForm userRegForm, Bill userBill);
+    User addNewUser(UserRegForm userRegForm, UserBill userAppServiceBill);
 
     @Override
     UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException;

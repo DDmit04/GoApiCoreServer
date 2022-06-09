@@ -1,9 +1,11 @@
 package com.goapi.goapi.service.implementation;
 
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.bill.BillType;
+import com.goapi.goapi.domain.model.bill.UserBill;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.repo.payment.BillRepository;
+import com.goapi.goapi.repo.finances.bill.AppServiceBillRepository;
+import com.goapi.goapi.repo.finances.bill.UserBillRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,26 +16,27 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BillService {
 
-    private final BillRepository billRepository;
+    private final UserBillRepository userBillRepository;
+    private final AppServiceBillRepository appServiceBillRepository;
 
-    public Bill createDatabaseBill(User owner) {
-        Bill bill = createBill(owner, BillType.DATABASE);
-        return bill;
+    public UserBill createUserBill() {
+        UserBill userBill = new UserBill();
+        userBill = userBillRepository.save(userBill);
+        return userBill;
     }
-    public Bill createUserBill() {
-        Bill bill = new Bill(BillType.USER);
-        bill = billRepository.save(bill);
-        return bill;
+    public AppServiceBill createDatabaseBill(User owner) {
+        AppServiceBill appServiceBill = createBillAppServiceBill(owner, BillType.DATABASE);
+        return appServiceBill;
     }
-    public Bill createUserApiBill(User owner) {
-        Bill bill = createBill(owner, BillType.USER_API);
-        return bill;
+    public AppServiceBill createUserApiBill(User owner) {
+        AppServiceBill appServiceBill = createBillAppServiceBill(owner, BillType.USER_API);
+        return appServiceBill;
     }
-    
-    private Bill createBill(User owner, BillType billType) {
-        Bill bill = new Bill(owner, billType);
-        bill = billRepository.save(bill);
-        return bill;
+
+    private AppServiceBill createBillAppServiceBill(User owner, BillType billType) {
+        AppServiceBill appServiceBill = new AppServiceBill(owner, billType);
+        appServiceBill = appServiceBillRepository.save(appServiceBill);
+        return appServiceBill;
     }
 
 
