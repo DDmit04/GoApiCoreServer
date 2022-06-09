@@ -52,7 +52,7 @@ public class UserApiController {
         HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String method = req.getMethod();
         String apiKey = extractUserApiKey(apiAuthHeader);
-        JsonNode res = userApiRequestServiceFacade.doRequest(apiId, requestId, method, apiKey, callApiRequest);
+        JsonNode res = userApiRequestServiceFacade.doUserApiRequest(apiId, requestId, method, apiKey, callApiRequest);
         return ResponseEntity.ok(res);
     }
 

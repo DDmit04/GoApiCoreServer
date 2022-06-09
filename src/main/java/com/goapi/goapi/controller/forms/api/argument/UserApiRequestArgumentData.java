@@ -1,4 +1,4 @@
-package com.goapi.goapi.controller.forms.api;
+package com.goapi.goapi.controller.forms.api.argument;
 
 import com.goapi.goapi.domain.model.userApi.request.RequestArgumentType;
 import lombok.Getter;
@@ -7,12 +7,12 @@ import lombok.Getter;
  * @author Daniil Dmitrochenkov
  **/
 @Getter
-public class CreateApiRequestArgument {
+public class UserApiRequestArgumentData {
 
     private String argName;
     private RequestArgumentType requestArgumentType;
 
-    public CreateApiRequestArgument(String argName, RequestArgumentType requestArgumentType) {
+    public UserApiRequestArgumentData(String argName, RequestArgumentType requestArgumentType) {
         this.argName = argName;
         this.requestArgumentType = requestArgumentType;
     }

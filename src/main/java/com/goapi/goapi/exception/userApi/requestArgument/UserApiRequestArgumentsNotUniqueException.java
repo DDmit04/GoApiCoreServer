@@ -1,4 +1,4 @@
-package com.goapi.goapi.exception.userApi.request;
+package com.goapi.goapi.exception.userApi.requestArgument;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

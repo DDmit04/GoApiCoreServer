@@ -2,6 +2,7 @@ package com.goapi.goapi.service.implementation.userApi;
 
 import com.goapi.goapi.domain.dto.tariff.UserApiTariffDto;
 import com.goapi.goapi.domain.model.userApi.UserApiTariff;
+import com.goapi.goapi.exception.tariff.userApi.UserApiTariffNotFoundException;
 import com.goapi.goapi.repo.userApi.ApiTariffRepository;
 import com.goapi.goapi.service.interfaces.userApi.UserApiTariffService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,9 @@ public class UserApiTariffServiceImpl implements UserApiTariffService {
     private final ApiTariffRepository apiTariffRepository;
 
     @Override
-    public Optional<UserApiTariff> getUserApiTariffById(Integer id) {
-        return apiTariffRepository.findById(id);
+    public UserApiTariff getUserApiTariffById(Integer tariffId) {
+        Optional<UserApiTariff> tariffOptional = apiTariffRepository.findById(tariffId);
+        return tariffOptional.orElseThrow(() -> new UserApiTariffNotFoundException(tariffId));
     }
 
     @Override

@@ -3,8 +3,8 @@ package com.goapi.goapi.service.implementation.userApi.query.builder;
 import com.goapi.goapi.domain.model.userApi.request.RequestArgumentType;
 import com.goapi.goapi.domain.model.userApi.request.UserApiRequest;
 import com.goapi.goapi.domain.model.userApi.request.UserApiRequestArgument;
-import com.goapi.goapi.exception.userApi.request.UserApiRequestArgumentInvalidNameException;
-import com.goapi.goapi.exception.userApi.request.UserApiRequestArgumentMismatchException;
+import com.goapi.goapi.exception.userApi.requestArgument.UserApiRequestArgumentInvalidNameException;
+import com.goapi.goapi.exception.userApi.requestArgument.UserApiRequestArgumentMismatchException;
 import com.goapi.goapi.service.implementation.userApi.query.argReplaceSuplier.TemplateArgumentReplaceSupplier;
 import com.goapi.goapi.service.implementation.userApi.query.argReplaceSuplier.TemplateArgumentReplaceSupplierFactory;
 import com.goapi.goapi.service.implementation.userApi.query.builder.queryElement.ArgQueryRequestStructureElement;
@@ -54,6 +54,7 @@ public class QueryRequestBuilder {
         }
     }
 
+    //TODO magic numbers
     private String getArgNameFromArgTemplate(String argTemplate) {
         String argName = argTemplate.substring(2, argTemplate.length() - 1);
         if(argName.length() <= 3) {

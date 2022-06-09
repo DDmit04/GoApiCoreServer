@@ -12,4 +12,8 @@ public class UserApiRequestNotFoundException extends RuntimeException {
     public UserApiRequestNotFoundException(Integer userApiRequestId) {
         super(String.format("User api request with id = '%s' not found!", userApiRequestId));
     }
+
+    public UserApiRequestNotFoundException(Integer apiId, Integer userApiRequestId) {
+        super(String.format("User api request with id = '%s' in api with id = '%s' not found!", userApiRequestId, apiId));
+    }
 }

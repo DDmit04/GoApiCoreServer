@@ -1,6 +1,6 @@
 package com.goapi.goapi.service.implementation.userApi;
 
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.userApi.UserApi;
@@ -25,22 +25,24 @@ import java.util.UUID;
 public class UserApiServiceImpl implements UserApiService {
 
     private final UserApiRepository userApiRepository;
+
     @Override
-    public UserApi createUserApi(String apiName, boolean isProtected, Database db, User user, Bill userApiBill) {
+    public UserApi createUserApi(String apiName, boolean isProtected, Database db, User user, AppServiceBill userApiAppServiceBill) {
         UserApiTariff userApiTariff = user.getUserApiTariff();
-        if(userApiTariff == null) {
+        if (userApiTariff == null) {
             Integer userId = user.getId();
             throw new UserApiTariffChosenException(userId);
         }
         String apiKey = UUID.randomUUID().toString();
-        UserApi newUserApi = new UserApi(apiKey, isProtected, db, apiName, user, userApiBill);
+        UserApi newUserApi = new UserApi(apiKey, isProtected, db, apiName, user, userApiAppServiceBill);
         newUserApi = userApiRepository.save(newUserApi);
         return newUserApi;
     }
 
     @Override
-    public Optional<UserApi> getUserApiById(Integer apiId) {
-        return userApiRepository.findById(apiId);
+    public UserApi getUserApiById(Integer apiId) {
+        Optional<UserApi> userApi = userApiRepository.findById(apiId);
+        return userApi.orElseThrow(() -> new UserApiNotFoundException(apiId));
     }
 
     @Override
@@ -53,15 +55,6 @@ public class UserApiServiceImpl implements UserApiService {
         String apiKey = UUID.randomUUID().toString();
         userApi.setApiKey(apiKey);
         userApiRepository.save(userApi);
-    }
-
-    @Override
-    public UserApi getApiByIdCheckOwner(User user, Integer apiId) {
-        Optional<UserApi> userApiOptional = getUserApiById(apiId);
-        return userApiOptional.map(userApi -> {
-            isApiOwnerOrThrow(user, userApi);
-            return userApi;
-        }).orElseThrow(() -> new UserApiNotFoundException(apiId));
     }
 
     @Override
@@ -82,7 +75,8 @@ public class UserApiServiceImpl implements UserApiService {
         return true;
     }
 
-    private void isApiOwnerOrThrow(User user, UserApi api) {
+    @Override
+    public void isApiOwnerOrThrow(User user, UserApi api) {
         if (!api.getOwner().equals(user)) {
             Integer userId = user.getId();
             throw new UserApiOwnerException(userId, api.getId());

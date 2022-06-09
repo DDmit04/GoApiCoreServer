@@ -1,8 +1,10 @@
 package com.goapi.goapi.service.implementation.userApi;
 
 import com.goapi.goapi.UrlUtils;
+import com.goapi.goapi.controller.forms.api.request.UserApiRequestData;
 import com.goapi.goapi.domain.model.userApi.UserApi;
 import com.goapi.goapi.domain.model.userApi.request.UserApiRequest;
+import com.goapi.goapi.exception.userApi.request.UserApiRequestNotFoundException;
 import com.goapi.goapi.repo.userApi.ApiRequestRepository;
 import com.goapi.goapi.service.implementation.userApi.query.builder.QueryRequestBuilder;
 import com.goapi.goapi.service.interfaces.userApi.UserApiRequestService;
@@ -31,8 +33,9 @@ public class UserApiRequestServiceImpl implements UserApiRequestService {
     private final ApiRequestRepository apiRequestRepository;
 
     @Override
-    public Optional<UserApiRequest> findUserApiRequestById(Integer requestId) {
-        return apiRequestRepository.findById(requestId);
+    public UserApiRequest findUserApiRequestById(Integer requestId) {
+        Optional<UserApiRequest> userApiRequestOptional = apiRequestRepository.findById(requestId);
+        return userApiRequestOptional.orElseThrow(() -> new UserApiRequestNotFoundException(requestId));
     }
 
     @Override
@@ -41,7 +44,10 @@ public class UserApiRequestServiceImpl implements UserApiRequestService {
     }
 
     @Override
-    public UserApiRequest createNewRequest(UserApi userApi, String requestName, String requestTemplate, HttpMethod httpMethod) {
+    public UserApiRequest createNewRequest(UserApi userApi, UserApiRequestData userApiRequestData) {
+        HttpMethod httpMethod = userApiRequestData.getHttpMethod();
+        String requestTemplate = userApiRequestData.getRequestTemplate();
+        String requestName = userApiRequestData.getRequestName();
         UserApiRequest newUserApiRequest = new UserApiRequest(userApi, requestName, requestTemplate, httpMethod);
         return apiRequestRepository.save(newUserApiRequest);
     }
@@ -65,12 +71,23 @@ public class UserApiRequestServiceImpl implements UserApiRequestService {
         UserApi userApi = userApiRequest.getUserApi();
         Integer userApiId = userApi.getId();
         Integer requestId = userApiRequest.getId();
-        Map<String, String> params = new HashMap<>(){{
+        Map<String, String> params = new HashMap<>() {{
             put(apiIdParamName, userApiId.toString());
             put(requestIdParamName, requestId.toString());
         }};
         String finalUrl = UrlUtils.addQueryParamsToUrl(doRequestUrl, params);
         return finalUrl;
+    }
+
+    @Override
+    public void updateRequestInfo(UserApiRequest userApiRequest, UserApiRequestData userApiRequestData) {
+        HttpMethod httpMethod = userApiRequestData.getHttpMethod();
+        String requestTemplate = userApiRequestData.getRequestTemplate();
+        String requestName = userApiRequestData.getRequestName();
+        userApiRequest.setHttpMethod(httpMethod);
+        userApiRequest.setRequestName(requestName);
+        userApiRequest.setRequestTemplate(requestTemplate);
+        apiRequestRepository.save(userApiRequest);
     }
 
 }

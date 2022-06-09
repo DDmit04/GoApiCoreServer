@@ -4,15 +4,12 @@ import com.goapi.goapi.domain.dto.tariff.UserApiTariffDto;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.userApi.UserApiTariff;
 import com.goapi.goapi.exception.tariff.userApi.UserApiTariffConditionChangeException;
-import com.goapi.goapi.exception.tariff.userApi.UserApiTariffNotFoundException;
 import com.goapi.goapi.service.interfaces.facase.userApi.UserApiTariffServiceFacade;
 import com.goapi.goapi.service.interfaces.user.UserService;
 import com.goapi.goapi.service.interfaces.userApi.UserApiService;
 import com.goapi.goapi.service.interfaces.userApi.UserApiTariffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * @author Daniil Dmitrochenkov
@@ -38,21 +35,15 @@ public class UserApiTariffServiceFacadeImpl implements UserApiTariffServiceFacad
 
     @Override
     public boolean changeUserApiTariff(User user, Integer tariffId) {
-        Optional<UserApiTariff> tariffOptional = userApiTariffService.getUserApiTariffById(tariffId);
-        return tariffOptional
-            .map(tariff -> changeUserApiTariff(user, tariff))
-            .orElseThrow(() -> new UserApiTariffNotFoundException(tariffId));
+        UserApiTariff tariff = userApiTariffService.getUserApiTariffById(tariffId);
+        boolean changed = changeUserApiTariff(user, tariff);
+        return changed;
     }
 
     @Override
     public void setUserApiTariff(User user, Integer tariffId) {
-        Optional<UserApiTariff> tariffOptional = userApiTariffService.getUserApiTariffById(tariffId);
-        if (tariffOptional.isPresent()) {
-            UserApiTariff tariff = tariffOptional.get();
-            changeUserApiTariff(user, tariff);
-        } else {
-            throw new UserApiTariffNotFoundException(tariffId);
-        }
+        UserApiTariff tariff = userApiTariffService.getUserApiTariffById(tariffId);
+        changeUserApiTariff(user, tariff);
     }
 
     private boolean changeUserApiTariff(User user, UserApiTariff newTariff) {

@@ -1,6 +1,7 @@
 package com.goapi.goapi.controller.controllers.userApi;
 
-import com.goapi.goapi.controller.forms.api.CreateApiRequestRequest;
+import com.goapi.goapi.controller.forms.api.request.CreateApiRequestRequest;
+import com.goapi.goapi.controller.forms.api.request.UpdateApiRequestRequest;
 import com.goapi.goapi.domain.dto.api.UserApiRequestDto;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.service.interfaces.facase.userApi.UserApiRequestServiceFacade;
@@ -31,7 +32,7 @@ public class UserApiRequestController {
     @PostMapping("/{apiId}")
     public ResponseEntity<UserApiRequestDto> addRequest(@AuthenticationPrincipal User user, @PathVariable Integer apiId,
                                      @RequestBody CreateApiRequestRequest createApiRequestRequest) {
-        UserApiRequestDto userApiRequest = userApiRequestServiceFacade.createNewUserApiRequest(user, apiId, createApiRequestRequest);
+        UserApiRequestDto userApiRequest = userApiRequestServiceFacade.createUserApiRequest(user, apiId, createApiRequestRequest);
         return ResponseEntity.ok(userApiRequest);
     }
 
@@ -44,7 +45,7 @@ public class UserApiRequestController {
     @GetMapping("/{apiId}/{requestId}")
     public ResponseEntity getRequestInfo(@AuthenticationPrincipal User user, @PathVariable Integer apiId,
                                         @PathVariable Integer requestId) {
-        UserApiRequestDto requestDto = userApiRequestServiceFacade.getUserRequestInfo(user, apiId, requestId);
+        UserApiRequestDto requestDto = userApiRequestServiceFacade.getUserApiRequestInfo(user, apiId, requestId);
         return ResponseEntity.ok(requestDto);
 
     }
@@ -60,10 +61,9 @@ public class UserApiRequestController {
         }
     }
 
-    @PatchMapping("/{apiId}/{requestId}")
-    public ResponseEntity<UserApiRequestDto> updateRequest(@AuthenticationPrincipal User user, @PathVariable Integer apiId,
-                                        @PathVariable Integer requestId, @RequestBody CreateApiRequestRequest createApiRequestRequest) {
-        UserApiRequestDto updatedUserApiRequest = userApiRequestServiceFacade.updateUserApiRequest(user, apiId, requestId, createApiRequestRequest);
+    @PatchMapping("/{apiId}")
+    public ResponseEntity<UserApiRequestDto> updateRequest(@AuthenticationPrincipal User user, @PathVariable Integer apiId, @RequestBody UpdateApiRequestRequest updateApiRequestRequest) {
+        UserApiRequestDto updatedUserApiRequest = userApiRequestServiceFacade.updateUserApiRequest(user, apiId, updateApiRequestRequest);
         return ResponseEntity.ok(updatedUserApiRequest);
     }
 

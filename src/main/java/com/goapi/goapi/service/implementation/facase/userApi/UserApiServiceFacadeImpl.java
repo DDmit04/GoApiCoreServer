@@ -4,11 +4,10 @@ import com.goapi.goapi.controller.forms.api.CreateUserApiRequest;
 import com.goapi.goapi.domain.dto.api.SummaryUserApiDto;
 import com.goapi.goapi.domain.dto.api.UserApiDto;
 import com.goapi.goapi.domain.dto.api.UserApiRequestDto;
-import com.goapi.goapi.domain.model.bill.Bill;
+import com.goapi.goapi.domain.model.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.database.Database;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.userApi.UserApi;
-import com.goapi.goapi.exception.database.DatabaseNotFoundException;
 import com.goapi.goapi.service.implementation.BillService;
 import com.goapi.goapi.service.interfaces.database.DatabaseService;
 import com.goapi.goapi.service.interfaces.facase.userApi.UserApiServiceFacade;
@@ -19,7 +18,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -32,27 +30,23 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
     private final UserApiService userApiService;
     private final DatabaseService databaseService;
     private final UserApiRequestService userApiRequestService;
-
     private final BillService billService;
 
 
     @Override
     public SummaryUserApiDto createApi(User user, CreateUserApiRequest createUserApiRequest) {
         Integer dbId = createUserApiRequest.getDatabaseId();
-        Optional<Database> databaseOptional = databaseService.getDatabaseById(dbId);
-        return databaseOptional.map(database -> {
-            boolean isProtected = createUserApiRequest.isProtected();
-            String userApiName = createUserApiRequest.getName();
-            Bill userApiBill = billService.createUserApiBill(user);
-            UserApi userApi = userApiService.createUserApi(userApiName, isProtected, database, user, userApiBill);
-            userApiName = userApi.getUserApiName();
-            isProtected = userApi.isProtected();
-            Integer apiId = userApi.getId();
-            int requestsCount = userApi.getUserApiRequests().size();
-            SummaryUserApiDto apiDto = new SummaryUserApiDto(apiId, isProtected, userApiName, requestsCount);
-            return apiDto;
-        }).orElseThrow(() -> new DatabaseNotFoundException(dbId));
-
+        Database database = databaseService.getDatabaseById(dbId);
+        boolean isProtected = createUserApiRequest.isProtected();
+        String userApiName = createUserApiRequest.getName();
+        AppServiceBill userApiAppServiceBill = billService.createUserApiBill(user);
+        UserApi userApi = userApiService.createUserApi(userApiName, isProtected, database, user, userApiAppServiceBill);
+        userApiName = userApi.getUserApiName();
+        isProtected = userApi.isProtected();
+        Integer apiId = userApi.getId();
+        int requestsCount = userApi.getUserApiRequests().size();
+        SummaryUserApiDto apiDto = new SummaryUserApiDto(apiId, isProtected, userApiName, requestsCount);
+        return apiDto;
     }
 
     @Override
@@ -68,7 +62,7 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
     @Override
     public String getUserApiKey(User user, Integer apiId) {
         UserApi userApi = userApiService.getApiByIdCheckOwner(user, apiId);
-        return userApi. getApiKey();
+        return userApi.getApiKey();
     }
 
     @Override
