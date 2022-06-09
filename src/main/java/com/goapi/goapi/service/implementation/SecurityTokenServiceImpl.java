@@ -3,6 +3,8 @@ package com.goapi.goapi.service.implementation;
 import com.goapi.goapi.domain.model.token.SecurityToken;
 import com.goapi.goapi.domain.model.token.TokenType;
 import com.goapi.goapi.domain.model.user.User;
+import com.goapi.goapi.exception.securityToken.TokenNotAcceptedException;
+import com.goapi.goapi.exception.securityToken.TokenNotFoundException;
 import com.goapi.goapi.repo.SecurityTokenRepository;
 import com.goapi.goapi.service.interfaces.SecurityTokenService;
 import lombok.RequiredArgsConstructor;
@@ -87,6 +89,7 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     private SecurityToken findValidToken(String tokenString, TokenType targetTokenType) {
         Optional<SecurityToken> token = securityTokenRepository.findByToken(tokenString);
         return token.map(tok -> {
+            Integer tokenId = tok.getId();
             TokenType tokenType = tok.getTokenType();
             boolean tokenTypeMatch = tokenType.equals(targetTokenType);
             boolean tokenValid = tok.isValid();
@@ -94,7 +97,7 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
             if (tokenAccepted) {
                 return tok;
             }
-            throw new RuntimeException();
-        }).orElseThrow(() -> new RuntimeException());
+            throw new TokenNotAcceptedException(tokenId, tokenType, targetTokenType, tokenTypeMatch);
+        }).orElseThrow(() -> new TokenNotFoundException(tokenString, targetTokenType));
     }
 }
