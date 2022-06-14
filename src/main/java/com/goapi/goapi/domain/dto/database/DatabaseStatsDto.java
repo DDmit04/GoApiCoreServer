@@ -12,11 +12,13 @@ public class DatabaseStatsDto {
     private final String databaseAndUsername;
     private final long currentSize;
     private final float fillPercent;
+    private final boolean allowConnections;
 
-    public DatabaseStatsDto(String location, String databaseAndUsername, long currentSize, float fillPercent) {
+    public DatabaseStatsDto(String location, String databaseAndUsername, long currentSize, float fillPercent, boolean allowConnections) {
         this.location = location;
         this.databaseAndUsername = databaseAndUsername;
         this.currentSize = currentSize;
         this.fillPercent = fillPercent;
+        this.allowConnections = allowConnections;
     }
 }

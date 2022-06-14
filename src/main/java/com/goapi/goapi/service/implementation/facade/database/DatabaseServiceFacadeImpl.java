@@ -47,14 +47,12 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
     @Override
     public DatabaseDto getDatabaseInfo(User user, Integer dbId) {
         Database database = getDatabaseCheckOwner(user, dbId);
-        boolean acceptExternalConnections = database.isAcceptExternalConnections();
         DatabaseStatsDto databaseStatsDto = externalDatabaseService.getDatabaseStats(dbId);
         return new DatabaseDto(
             database.getId(),
             database.getDatabaseName(),
             database.getCreatedAt(),
             database.getDatabaseType(),
-            acceptExternalConnections,
             databaseStatsDto
         );
     }

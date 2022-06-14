@@ -48,7 +48,8 @@ public class ExternalDatabaseServiceImpl implements ExternalDatabaseService {
             result.getLocation(),
             result.getDatabaseAndUsername(),
             result.getCurrentSize(),
-            result.getFillPercent()
+            result.getFillPercent(),
+            result.getAllowConnections()
         );
         return stats;
     }
@@ -66,7 +67,8 @@ public class ExternalDatabaseServiceImpl implements ExternalDatabaseService {
         String databaseAndUsername = response.getDatabaseAndUsername();
         long currentSize = response.getCurrentSize();
         float fillPercent = response.getFillPercent();
-        DatabaseStatsDto databaseStatsDto = new DatabaseStatsDto(location, databaseAndUsername, currentSize, fillPercent);
+        boolean allowConnections = response.getAllowConnections();
+        DatabaseStatsDto databaseStatsDto = new DatabaseStatsDto(location, databaseAndUsername, currentSize, fillPercent, allowConnections);
         return databaseStatsDto;
     }
 
@@ -89,7 +91,8 @@ public class ExternalDatabaseServiceImpl implements ExternalDatabaseService {
             response.getLocation(),
             response.getDatabaseAndUsername(),
             response.getCurrentSize(),
-            response.getFillPercent()
+            response.getFillPercent(),
+            response.getAllowConnections()
         );
         return stats;
     }

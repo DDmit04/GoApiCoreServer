@@ -26,7 +26,8 @@ public class ExternalDatabaseServiceImplMock implements ExternalDatabaseService 
         "testLoc",
         "testDatabaseUsername",
         0,
-        0
+        0,
+        true
     );
 
     @Override
@@ -81,10 +82,12 @@ public class ExternalDatabaseServiceImplMock implements ExternalDatabaseService 
     @Override
     public boolean forbidExternalDatabaseConnections(Integer dbId) {
         log.info(String.format("Forbid external database connections for db with id = '%s' grpc", dbId));
+        return true;
     }
 
     @Override
     public boolean allowExternalDatabaseConnections(Integer dbId) {
         log.info(String.format("Allow external database connections for db with id = '%s' grpc", dbId));
+        return true;
     }
 }
