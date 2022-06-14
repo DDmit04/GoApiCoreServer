@@ -1,8 +1,8 @@
 package com.goapi.goapi.controller.controllers.userApi;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.goapi.goapi.controller.forms.api.CallApiRequest;
-import com.goapi.goapi.service.interfaces.facase.userApi.UserApiRequestServiceFacade;
+import com.goapi.goapi.controller.forms.userApi.CallApiRequest;
+import com.goapi.goapi.service.interfaces.facade.userApi.UserApiRequestServiceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

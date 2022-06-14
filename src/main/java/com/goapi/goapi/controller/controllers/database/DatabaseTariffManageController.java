@@ -2,7 +2,7 @@ package com.goapi.goapi.controller.controllers.database;
 
 import com.goapi.goapi.domain.dto.tariff.DatabaseTariffDto;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.service.interfaces.facase.database.DatabaseTariffServiceFacade;
+import com.goapi.goapi.service.interfaces.facade.database.DatabaseTariffServiceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,11 +30,7 @@ public class DatabaseTariffManageController {
 
     @PatchMapping("/{dbId}/{tariffId}")
     public ResponseEntity changeDatabaseTariff(@AuthenticationPrincipal User user, @PathVariable Integer dbId, @PathVariable Integer tariffId) {
-        boolean changed = databaseTariffServiceFacade.changeDatabaseTariff(user, dbId, tariffId);
-        if (changed) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        databaseTariffServiceFacade.changeDatabaseTariff(user, dbId, tariffId);
+        return ResponseEntity.ok().build();
     }
 }

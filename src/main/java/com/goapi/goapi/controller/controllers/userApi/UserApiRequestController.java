@@ -1,10 +1,10 @@
 package com.goapi.goapi.controller.controllers.userApi;
 
-import com.goapi.goapi.controller.forms.api.request.CreateApiRequestRequest;
-import com.goapi.goapi.controller.forms.api.request.UpdateApiRequestRequest;
-import com.goapi.goapi.domain.dto.api.UserApiRequestDto;
+import com.goapi.goapi.controller.forms.userApi.request.CreateApiRequestRequest;
+import com.goapi.goapi.controller.forms.userApi.request.UpdateApiRequestRequest;
+import com.goapi.goapi.domain.dto.userApi.UserApiRequestDto;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.service.interfaces.facase.userApi.UserApiRequestServiceFacade;
+import com.goapi.goapi.service.interfaces.facade.userApi.UserApiRequestServiceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,7 +37,7 @@ public class UserApiRequestController {
     }
 
     @GetMapping("/{apiId}")
-    public ResponseEntity listApiRequests(@AuthenticationPrincipal User user, @PathVariable Integer apiId) {
+    public ResponseEntity<List<UserApiRequestDto>> listApiRequests(@AuthenticationPrincipal User user, @PathVariable Integer apiId) {
         List<UserApiRequestDto> apiRequestList = userApiRequestServiceFacade.getUserApiRequests(user, apiId);
         return ResponseEntity.ok(apiRequestList);
     }

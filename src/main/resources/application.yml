@@ -59,6 +59,13 @@ authorization:
   jwt:
     secret: BAD_SECRET
 
+string:
+  request-arg-pattern: "{%s}"
+
+limit:
+  max-apis-count: 100
+  max-databases-count: 100
+
 tokens:
   life:
     email: 36000

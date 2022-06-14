@@ -3,7 +3,7 @@ package com.goapi.goapi.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.security.JwtUtils;
-import com.goapi.goapi.service.interfaces.facase.user.UserServiceFacade;
+import com.goapi.goapi.service.interfaces.facade.user.UserServiceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;

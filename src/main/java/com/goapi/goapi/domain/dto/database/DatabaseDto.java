@@ -11,7 +11,6 @@ import java.util.Date;
  **/
 @Getter
 public class DatabaseDto extends SummaryDatabaseDto implements Serializable {
-
     private final DatabaseStatsDto databaseStats;
 
     public DatabaseDto(Integer id, String name, Date createdAt, DatabaseType databaseType, DatabaseStatsDto databaseStats) {

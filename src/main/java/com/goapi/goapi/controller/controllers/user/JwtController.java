@@ -1,7 +1,7 @@
 package com.goapi.goapi.controller.controllers.user;
 
 import com.goapi.goapi.controller.forms.user.auth.UserAuthInfo;
-import com.goapi.goapi.service.interfaces.facase.user.UserServiceFacade;
+import com.goapi.goapi.service.interfaces.facade.user.UserServiceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

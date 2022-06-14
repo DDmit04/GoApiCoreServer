@@ -1,12 +1,14 @@
 package com.goapi.goapi.controller.controllers.userApi;
 
 import com.goapi.goapi.controller.forms.RenameForm;
-import com.goapi.goapi.controller.forms.api.CreateUserApiRequest;
-import com.goapi.goapi.domain.dto.api.SummaryUserApiDto;
-import com.goapi.goapi.domain.dto.api.UserApiDto;
+import com.goapi.goapi.controller.forms.userApi.CreateUserApiRequest;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
+import com.goapi.goapi.domain.dto.payments.appServiceBill.AppServiceBillDto;
+import com.goapi.goapi.domain.dto.userApi.SummaryUserApiDto;
+import com.goapi.goapi.domain.dto.userApi.UserApiDto;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.service.interfaces.facase.userApi.UserApiServiceFacade;
+import com.goapi.goapi.service.interfaces.facade.finances.BillServiceFacade;
+import com.goapi.goapi.service.interfaces.facade.userApi.UserApiServiceFacade;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,7 @@ import java.util.List;
 public class UserApiManageController {
 
     private final UserApiServiceFacade userApiServiceFacade;
+    private final BillServiceFacade billServiceFacade;
 
     @PostMapping
     public ResponseEntity createUserApi(@AuthenticationPrincipal User user, @RequestBody CreateUserApiRequest createUserApiRequest) {
@@ -45,6 +48,12 @@ public class UserApiManageController {
         return ResponseEntity.ok(userApiDto);
     }
 
+    @GetMapping("/bill/{apiId}")
+    public ResponseEntity<AppServiceBillDto> getDatabaseBill(@AuthenticationPrincipal User user, @PathVariable Integer apiId) {
+        AppServiceBillDto billDto = billServiceFacade.getUserApiBillDto(user, apiId);
+        return ResponseEntity.ok(billDto);
+    }
+
     @DeleteMapping("/{apiId}")
     public ResponseEntity deleteUserApi(@AuthenticationPrincipal User user, @PathVariable Integer apiId) {
         boolean deleted = userApiServiceFacade.deleteApi(user, apiId);
@@ -56,9 +65,9 @@ public class UserApiManageController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SummaryUserApiDto>> listUserApis(@AuthenticationPrincipal User user) {
-        List<SummaryUserApiDto> apiDtoList = userApiServiceFacade.listUserApis(user);
-        return ResponseEntity.ok(apiDtoList);
+    public ResponseEntity<List<SummaryUserApiDto>> getUserApisInfo(@AuthenticationPrincipal User user) {
+        List<SummaryUserApiDto> userApisInfoDto = userApiServiceFacade.getUserApisInfo(user);
+        return ResponseEntity.ok(userApisInfoDto);
     }
 
     @PatchMapping("/{apiId}")

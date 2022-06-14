@@ -5,9 +5,11 @@ import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.controller.forms.user.PasswordForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
+import com.goapi.goapi.domain.dto.payments.appServiceBill.AppServiceBillDto;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.service.interfaces.database.DatabaseService;
-import com.goapi.goapi.service.interfaces.facase.database.DatabaseServiceFacade;
+import com.goapi.goapi.service.interfaces.appService.database.DatabaseService;
+import com.goapi.goapi.service.interfaces.facade.database.DatabaseServiceFacade;
+import com.goapi.goapi.service.interfaces.facade.finances.BillServiceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,6 +36,7 @@ public class DatabaseController {
 
     private final DatabaseServiceFacade databaseServiceFacade;
     private final DatabaseService databaseService;
+    private final BillServiceFacade billServiceFacade;
 
 
     @PostMapping
@@ -63,6 +66,12 @@ public class DatabaseController {
     public ResponseEntity<DatabaseDto> getDatabaseInfo(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
         DatabaseDto databaseInfo = databaseServiceFacade.getDatabaseInfo(user, dbId);
         return ResponseEntity.ok(databaseInfo);
+    }
+
+    @GetMapping("/bill/{dbId}")
+    public ResponseEntity<AppServiceBillDto> getDatabaseBill(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
+        AppServiceBillDto billDto = billServiceFacade.getDatabaseBillDto(user, dbId);
+        return ResponseEntity.ok(billDto);
     }
 
     @DeleteMapping("/{dbId}")

@@ -1,9 +1,9 @@
 package com.goapi.goapi.security.handler;
 
-import com.goapi.goapi.service.interfaces.user.UserService;
+import com.goapi.goapi.domain.model.user.User;
+import com.goapi.goapi.service.interfaces.user.UserJwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class LogOutSuccessHandler extends SecurityContextLogoutHandler {
 
-    private final UserService userService;
+    private final UserJwtService userJwtService;
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        userService.invalidateJwtRefreshToken(userDetails.getUsername());
+        User user = (User) authentication.getPrincipal();
+        userJwtService.invalidateJwtRefreshToken(user);
         super.logout(request, response, authentication);
     }
 }

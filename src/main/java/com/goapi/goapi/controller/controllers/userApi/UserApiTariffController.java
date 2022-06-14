@@ -1,7 +1,7 @@
 package com.goapi.goapi.controller.controllers.userApi;
 
 import com.goapi.goapi.domain.dto.tariff.UserApiTariffDto;
-import com.goapi.goapi.service.interfaces.userApi.UserApiTariffService;
+import com.goapi.goapi.service.interfaces.appService.userApi.UserApiTariffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

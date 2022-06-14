@@ -1,15 +1,16 @@
 package com.goapi.goapi.domain.model.user;
 
-import com.goapi.goapi.domain.model.bill.UserBill;
-import com.goapi.goapi.domain.model.database.Database;
-import com.goapi.goapi.domain.model.token.SecurityToken;
-import com.goapi.goapi.domain.model.userApi.UserApi;
-import com.goapi.goapi.domain.model.userApi.UserApiTariff;
+import com.goapi.goapi.domain.model.appService.database.Database;
+import com.goapi.goapi.domain.model.appService.userApi.UserApi;
+import com.goapi.goapi.domain.model.finances.bill.UserBill;
+import com.goapi.goapi.domain.model.user.token.EmailSecurityToken;
+import com.goapi.goapi.domain.model.user.token.PasswordSecurityToken;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -21,7 +22,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -52,10 +52,12 @@ public class User implements UserDetails {
     @Email
     @Column(unique = true)
     private String email;
+    @Column(name = "is_email_confirmed")
+    private boolean isEmailConfirmed;
     @Column
     private String jwtRefreshToken;
 
-    @OneToMany(mappedBy = "owner", orphanRemoval = true)
+    @OneToMany(mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Database> databases = new LinkedHashSet<>();
 
     @ElementCollection(targetClass = UserRoles.class, fetch = FetchType.EAGER)
@@ -63,22 +65,20 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<UserRoles> roles;
 
-    @OneToMany(mappedBy = "owner", orphanRemoval = true)
+    @OneToMany(mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserApi> userApis = new LinkedHashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "user_api_tariff_id")
-    private UserApiTariff userApiTariff;
-
-    @Column(name = "is_email_confirmed")
-    private boolean isEmailConfirmed;
-
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private Set<SecurityToken> securityTokens = new LinkedHashSet<>();
-
-    @OneToOne(orphanRemoval = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "bill_id")
     private UserBill userBill;
+
+    @OneToOne(orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "email_token_id")
+    private EmailSecurityToken emailSecurityToken;
+
+    @OneToOne(orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "password_token_id")
+    private PasswordSecurityToken passwordSecurityToken;
 
     public User(String username, String userPassword, String email, Set<UserRoles> roles, UserBill userBill) {
         this.username = username;
