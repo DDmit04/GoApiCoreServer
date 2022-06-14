@@ -1,5 +1,6 @@
 package com.goapi.goapi.service.implementation.grpc;
 
+import com.common.DatabaseIdConnectionsAllowRequest;
 import com.common.DatabaseIdPasswordRequest;
 import com.common.DatabaseIdRequest;
 import com.common.ResponseResult;
@@ -136,5 +137,24 @@ public class ExternalDatabaseServiceImpl implements ExternalDatabaseService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean forbidExternalDatabaseConnections(Integer dbId) {
+        return updateAllowConnections(dbId, false);
+    }
+
+    @Override
+    public boolean allowExternalDatabaseConnections(Integer dbId) {
+        return updateAllowConnections(dbId, true);
+    }
+
+    private boolean updateAllowConnections(Integer dbId, boolean value) {
+        DatabaseIdConnectionsAllowRequest request = DatabaseIdConnectionsAllowRequest.newBuilder()
+            .setDbId(dbId)
+            .setAllow(value)
+            .build();
+        ResponseResult responseResult = externalDatabaseServiceStub.updateDatabaseAllowConnections(request);
+        return responseResult.getResult();
     }
 }

@@ -40,15 +40,25 @@ public class DatabaseController {
 
 
     @PostMapping
-    public ResponseEntity<SummaryDatabaseDto> createNewDatabase(@AuthenticationPrincipal User user, @Valid @RequestBody CreateDatabaseForm createDbForm) {
+    public ResponseEntity<SummaryDatabaseDto> createDatabase(@AuthenticationPrincipal User user, @Valid @RequestBody CreateDatabaseForm createDbForm) {
         DatabaseDto databaseDto = databaseServiceFacade.createNewDatabase(user, createDbForm);
         return ResponseEntity.ok(databaseDto);
     }
 
-    @GetMapping
-    public ResponseEntity<List<SummaryDatabaseDto>> listDatabases(@AuthenticationPrincipal User user) {
-        List<SummaryDatabaseDto> summaryDatabaseDtoList = databaseService.listUserDatabases(user);
-        return ResponseEntity.ok(summaryDatabaseDtoList);
+    @DeleteMapping("/{dbId}")
+    public ResponseEntity deleteDatabase(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
+        boolean deleted = databaseServiceFacade.deleteDatabase(user, dbId);
+        if (deleted) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/{dbId}/reset")
+    public ResponseEntity<DatabaseDto> resetDatabase(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
+        DatabaseDto dbInfo = databaseServiceFacade.resetDatabase(user, dbId);
+        return ResponseEntity.ok(dbInfo);
     }
 
     @PatchMapping("/{dbId}")
@@ -68,24 +78,20 @@ public class DatabaseController {
         return ResponseEntity.ok(databaseInfo);
     }
 
+    @GetMapping
+    public ResponseEntity<List<SummaryDatabaseDto>> listDatabases(@AuthenticationPrincipal User user) {
+        List<SummaryDatabaseDto> summaryDatabaseDtoList = databaseService.listUserDatabases(user);
+        return ResponseEntity.ok(summaryDatabaseDtoList);
+    }
+
     @GetMapping("/bill/{dbId}")
     public ResponseEntity<AppServiceBillDto> getDatabaseBill(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
         AppServiceBillDto billDto = billServiceFacade.getDatabaseBillDto(user, dbId);
         return ResponseEntity.ok(billDto);
     }
 
-    @DeleteMapping("/{dbId}")
-    public ResponseEntity deleteDatabase(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
-        boolean deleted = databaseServiceFacade.deleteDatabase(user, dbId);
-        if (deleted) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
     @GetMapping("/{dbId}/password/reset")
-    public ResponseEntity generateNewDbPassword(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
+    public ResponseEntity generateNewPasswordForDatabase(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
         boolean updated = databaseServiceFacade.generateNewDbPassword(user, dbId);
         if (updated) {
             return ResponseEntity.ok().build();
@@ -94,7 +100,7 @@ public class DatabaseController {
         }
     }
     @GetMapping("/{dbId}/password")
-    public ResponseEntity<PasswordForm> getDbPassword(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
+    public ResponseEntity<PasswordForm> getDatabasePassword(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
         String password = databaseServiceFacade.getDatabasePassword(user, dbId);
         if (StringUtils.hasText(password)) {
             PasswordForm passwordForm = new PasswordForm(password);
@@ -104,10 +110,16 @@ public class DatabaseController {
         }
     }
 
-    @GetMapping("/{dbId}/reset")
-    public ResponseEntity<DatabaseDto> resetDatabase(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
-        DatabaseDto dbInfo = databaseServiceFacade.resetDatabase(user, dbId);
-        return ResponseEntity.ok(dbInfo);
+    @GetMapping("/{dbId}/allow")
+    public ResponseEntity allowExternalConnections(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
+        databaseServiceFacade.allowDatabaseExternalConnections(user, dbId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{dbId}/deny")
+    public ResponseEntity denyExternalConnections(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
+        databaseServiceFacade.denyDatabaseExternalConnections(user, dbId);
+        return ResponseEntity.ok().build();
     }
 
 }

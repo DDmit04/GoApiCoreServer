@@ -59,6 +59,9 @@ public class Database extends AppServiceObject {
     private String databasePassword;
     @Enumerated(EnumType.STRING)
     private DatabaseType databaseType;
+
+    @Column(name = "accept_external_connections")
+    private boolean acceptExternalConnections;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tariff_id")
     private DatabaseTariff dbTariff;

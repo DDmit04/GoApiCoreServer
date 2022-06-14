@@ -35,4 +35,7 @@ public interface DatabaseService {
 
     int getTotalUserDatabasesCount(User owner);
 
+    void permitExternalDatabaseConnections(Database db);
+
+    void forbidExternalDatabaseConnections(Database db);
 }

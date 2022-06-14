@@ -46,13 +46,15 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
 
     @Override
     public DatabaseDto getDatabaseInfo(User user, Integer dbId) {
-        Database db = getDatabaseCheckOwner(user, dbId);
+        Database database = getDatabaseCheckOwner(user, dbId);
+        boolean acceptExternalConnections = database.isAcceptExternalConnections();
         DatabaseStatsDto databaseStatsDto = externalDatabaseService.getDatabaseStats(dbId);
         return new DatabaseDto(
-            db.getId(),
-            db.getDatabaseName(),
-            db.getCreatedAt(),
-            db.getDatabaseType(),
+            database.getId(),
+            database.getDatabaseName(),
+            database.getCreatedAt(),
+            database.getDatabaseType(),
+            acceptExternalConnections,
             databaseStatsDto
         );
     }
@@ -88,6 +90,20 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
         Database db = getDatabaseCheckOwner(user, dbId);
         boolean renamed = databaseService.renameDatabase(db, newDatabaseName);
         return renamed;
+    }
+
+    @Override
+    public void denyDatabaseExternalConnections(User user, Integer dbId) {
+        Database db = getDatabaseCheckOwner(user, dbId);
+        databaseService.forbidExternalDatabaseConnections(db);
+        externalDatabaseService.forbidExternalDatabaseConnections(dbId);
+    }
+
+    @Override
+    public void allowDatabaseExternalConnections(User user, Integer dbId) {
+        Database db = getDatabaseCheckOwner(user, dbId);
+        databaseService.permitExternalDatabaseConnections(db);
+        externalDatabaseService.allowExternalDatabaseConnections(dbId);
     }
 
     private Database getDatabaseCheckOwner(User user, Integer dbId) {

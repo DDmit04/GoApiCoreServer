@@ -59,6 +59,16 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
+    public void permitExternalDatabaseConnections(Database db) {
+        updateAllowExternalDatabaseConnections(db, true);
+    }
+
+    @Override
+    public void forbidExternalDatabaseConnections(Database db) {
+        updateAllowExternalDatabaseConnections(db, false);
+    }
+
+    @Override
     public List<SummaryDatabaseDto> listUserDatabases(User user) {
         Integer userId = user.getId();
         List<Database> databases = databaseRepo.findAllDatabasesByOwnerId(userId);
@@ -90,7 +100,8 @@ public class DatabaseServiceImpl implements DatabaseService {
         newDbId = database.getId();
         Date createdAt = database.getCreatedAt();
         databaseType = database.getDatabaseType();
-        DatabaseDto databaseDto = new DatabaseDto(newDbId, externalName, createdAt, databaseType, databaseStatsDto);
+        boolean acceptExternalConnections = database.isAcceptExternalConnections();
+        DatabaseDto databaseDto = new DatabaseDto(newDbId, externalName, createdAt, databaseType, acceptExternalConnections, databaseStatsDto);
         return databaseDto;
     }
 
@@ -109,12 +120,14 @@ public class DatabaseServiceImpl implements DatabaseService {
     public DatabaseDto resetDatabase(Database database) {
         String newPassword = UUID.randomUUID().toString();
         Integer dbId = database.getId();
+        boolean acceptExternalConnections = database.isAcceptExternalConnections();
         DatabaseStatsDto databaseStatsDto = externalDatabaseService.resetExternalDatabase(dbId, newPassword);
         DatabaseDto newInfo = new DatabaseDto(
             dbId,
             database.getDatabaseName(),
             database.getCreatedAt(),
             database.getDatabaseType(),
+            acceptExternalConnections,
             databaseStatsDto
         );
         return newInfo;
@@ -153,6 +166,14 @@ public class DatabaseServiceImpl implements DatabaseService {
         db.setDatabaseName(newDatabaseName);
         databaseRepo.save(db);
         return true;
+    }
+
+    private void updateAllowExternalDatabaseConnections(Database db, boolean allow) {
+        boolean acceptExternalConnections = db.isAcceptExternalConnections();
+        if (acceptExternalConnections != allow) {
+            db.setAcceptExternalConnections(allow);
+            databaseRepo.save(db);
+        }
     }
 
 }

@@ -77,4 +77,14 @@ public class ExternalDatabaseServiceImplMock implements ExternalDatabaseService 
         }
         return result;
     }
+
+    @Override
+    public boolean forbidExternalDatabaseConnections(Integer dbId) {
+        log.info(String.format("Forbid external database connections for db with id = '%s' grpc", dbId));
+    }
+
+    @Override
+    public boolean allowExternalDatabaseConnections(Integer dbId) {
+        log.info(String.format("Allow external database connections for db with id = '%s' grpc", dbId));
+    }
 }

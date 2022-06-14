@@ -9,13 +9,13 @@ import lombok.Data;
 public class DatabaseStatsDto {
 
     private final String location;
-    private final String dbAndUsername;
+    private final String databaseAndUsername;
     private final long currentSize;
     private final float fillPercent;
 
-    public DatabaseStatsDto(String location, String dbAndUsername, long currentSize, float fillPercent) {
+    public DatabaseStatsDto(String location, String databaseAndUsername, long currentSize, float fillPercent) {
         this.location = location;
-        this.dbAndUsername = dbAndUsername;
+        this.databaseAndUsername = databaseAndUsername;
         this.currentSize = currentSize;
         this.fillPercent = fillPercent;
     }

@@ -11,10 +11,13 @@ import java.util.Date;
  **/
 @Getter
 public class DatabaseDto extends SummaryDatabaseDto implements Serializable {
+
+    private final boolean allowConnections;
     private final DatabaseStatsDto databaseStats;
 
-    public DatabaseDto(Integer id, String name, Date createdAt, DatabaseType databaseType, DatabaseStatsDto databaseStats) {
-        super(id, name, createdAt, databaseType);
+    public DatabaseDto(Integer id, String externalName, Date createdAt, DatabaseType databaseType, boolean allowConnections, DatabaseStatsDto databaseStats) {
+        super(id, externalName, createdAt, databaseType);
+        this.allowConnections = allowConnections;
         this.databaseStats = databaseStats;
     }
 }

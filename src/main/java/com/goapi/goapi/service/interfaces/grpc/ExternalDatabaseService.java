@@ -18,4 +18,8 @@ public interface ExternalDatabaseService {
     boolean changeExternalDatabaseTariff(Integer dbId, long newSize);
 
     JsonNode sendQuery(Integer dbId, String finalTemplate);
+
+    boolean forbidExternalDatabaseConnections(Integer dbId);
+
+    boolean allowExternalDatabaseConnections(Integer dbId);
 }
