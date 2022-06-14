@@ -2,7 +2,6 @@ package com.goapi.goapi.service.interfaces.appService.database;
 
 import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
-import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
 import com.goapi.goapi.domain.model.appService.database.Database;
 import com.goapi.goapi.domain.model.appService.tariff.DatabaseTariff;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
@@ -13,7 +12,7 @@ import java.util.List;
 public interface DatabaseService {
     Database getDatabaseById(Integer id);
 
-    List<SummaryDatabaseDto> listUserDatabases(User user);
+    List<Database> listUserDatabases(User user);
 
     DatabaseDto createNewDatabase(User owner, DatabaseTariff tariff, AppServiceBill databaseAppServiceBill, CreateDatabaseForm dbForm);
 

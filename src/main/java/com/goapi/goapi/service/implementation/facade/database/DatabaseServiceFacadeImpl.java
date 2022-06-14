@@ -3,6 +3,7 @@ package com.goapi.goapi.service.implementation.facade.database;
 import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.database.DatabaseStatsDto;
+import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
 import com.goapi.goapi.domain.model.appService.database.Database;
 import com.goapi.goapi.domain.model.appService.tariff.DatabaseTariff;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
@@ -16,6 +17,9 @@ import com.goapi.goapi.service.interfaces.grpc.ExternalDatabaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Daniil Dmitrochenkov
@@ -102,6 +106,21 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
         Database db = getDatabaseCheckOwner(user, dbId);
         databaseService.permitExternalDatabaseConnections(db);
         externalDatabaseService.allowExternalDatabaseConnections(dbId);
+    }
+
+    @Override
+    public List<SummaryDatabaseDto> listUserDatabasesDtos(User user) {
+        List<Database> databases = databaseService.listUserDatabases(user);
+        List<SummaryDatabaseDto> summaryDatabaseDtoList = databases
+            .stream()
+            .map(database -> new SummaryDatabaseDto(
+                database.getId(),
+                database.getDatabaseName(),
+                database.getCreatedAt(),
+                database.getDatabaseType())
+            )
+            .collect(Collectors.toList());
+        return summaryDatabaseDtoList;
     }
 
     private Database getDatabaseCheckOwner(User user, Integer dbId) {

@@ -4,7 +4,6 @@ import com.example.DatabaseType;
 import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.database.DatabaseStatsDto;
-import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
 import com.goapi.goapi.domain.model.appService.database.Database;
 import com.goapi.goapi.domain.model.appService.tariff.DatabaseTariff;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
@@ -21,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * @author Daniil Dmitrochenkov
@@ -69,19 +67,10 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public List<SummaryDatabaseDto> listUserDatabases(User user) {
+    public List<Database> listUserDatabases(User user) {
         Integer userId = user.getId();
         List<Database> databases = databaseRepo.findAllDatabasesByOwnerId(userId);
-        List<SummaryDatabaseDto> summaryDatabaseDtoList = databases
-            .stream()
-            .map(database -> new SummaryDatabaseDto(
-                database.getId(),
-                database.getDatabaseName(),
-                database.getCreatedAt(),
-                database.getDatabaseType())
-            )
-            .collect(Collectors.toList());
-        return summaryDatabaseDtoList;
+        return databases;
     }
 
     @Override

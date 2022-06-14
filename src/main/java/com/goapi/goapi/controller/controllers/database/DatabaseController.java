@@ -7,7 +7,6 @@ import com.goapi.goapi.domain.dto.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
 import com.goapi.goapi.domain.dto.payments.appServiceBill.AppServiceBillDto;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.service.interfaces.appService.database.DatabaseService;
 import com.goapi.goapi.service.interfaces.facade.database.DatabaseServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.finances.BillServiceFacade;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,6 @@ import java.util.List;
 public class DatabaseController {
 
     private final DatabaseServiceFacade databaseServiceFacade;
-    private final DatabaseService databaseService;
     private final BillServiceFacade billServiceFacade;
 
 
@@ -80,7 +78,7 @@ public class DatabaseController {
 
     @GetMapping
     public ResponseEntity<List<SummaryDatabaseDto>> listDatabases(@AuthenticationPrincipal User user) {
-        List<SummaryDatabaseDto> summaryDatabaseDtoList = databaseService.listUserDatabases(user);
+        List<SummaryDatabaseDto> summaryDatabaseDtoList = databaseServiceFacade.listUserDatabasesDtos(user);
         return ResponseEntity.ok(summaryDatabaseDtoList);
     }
 

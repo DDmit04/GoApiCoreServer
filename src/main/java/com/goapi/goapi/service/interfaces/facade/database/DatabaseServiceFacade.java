@@ -2,7 +2,10 @@ package com.goapi.goapi.service.interfaces.facade.database;
 
 import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.domain.dto.database.DatabaseDto;
+import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
 import com.goapi.goapi.domain.model.user.User;
+
+import java.util.List;
 
 public interface DatabaseServiceFacade {
     DatabaseDto createNewDatabase(User owner, CreateDatabaseForm dbForm);
@@ -22,4 +25,6 @@ public interface DatabaseServiceFacade {
     void denyDatabaseExternalConnections(User user, Integer dbId);
 
     void allowDatabaseExternalConnections(User user, Integer dbId);
+
+    List<SummaryDatabaseDto> listUserDatabasesDtos(User user);
 }
