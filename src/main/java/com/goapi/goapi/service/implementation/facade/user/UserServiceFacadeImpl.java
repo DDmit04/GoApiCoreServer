@@ -1,17 +1,19 @@
 package com.goapi.goapi.service.implementation.facade.user;
 
 import com.goapi.goapi.controller.forms.user.UserRegForm;
-import com.goapi.goapi.controller.forms.user.auth.UserAuthInfo;
+import com.goapi.goapi.domain.dto.UserAuthDto;
 import com.goapi.goapi.domain.model.finances.bill.UserBill;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.domain.model.user.token.SecurityToken;
 import com.goapi.goapi.security.JwtUtils;
 import com.goapi.goapi.service.interfaces.facade.user.UserServiceFacade;
+import com.goapi.goapi.service.interfaces.finances.bill.UserBillService;
 import com.goapi.goapi.service.interfaces.user.UserJwtService;
 import com.goapi.goapi.service.interfaces.user.UserService;
 import com.goapi.goapi.service.interfaces.user.mail.MailService;
 import com.goapi.goapi.service.interfaces.user.securityToken.EmailSecurityTokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +31,13 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
     private final UserJwtService userJwtService;
     private final JwtUtils jwtTokenUtil;
     private final EmailSecurityTokenService emailSecurityTokenService;
+    private final UserBillService userBillService;
+    @Value("${string.invalid-refresh-token}")
+    private String invalidRefreshTokenMessage;
 
     @Override
     public User createNewUser(UserRegForm userRegForm) {
-        UserBill userBill = new UserBill();
+        UserBill userBill = userBillService.createUserBill();
         User user = userService.addNewUser(userRegForm, userBill);
         SecurityToken newEmailConfirmToken = emailSecurityTokenService.createNewEmailConfirmToken(user);
         String tokenString = newEmailConfirmToken.getToken();
@@ -41,7 +46,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
     }
 
     @Override
-    public UserAuthInfo refreshJwtTokens(String refreshJwtToken) {
+    public UserAuthDto refreshJwtTokens(String refreshJwtToken) {
         boolean tokenIsValid = jwtTokenUtil.validateToken(refreshJwtToken);
         if(tokenIsValid) {
             String givenUserRefreshToken = jwtTokenUtil.getTokenSubject(refreshJwtToken);
@@ -52,7 +57,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
                 return userJwtService.refreshJwtTokens(user);
             }
         }
-        throw new BadCredentialsException("Refresh token is invalid!");
+        throw new BadCredentialsException(invalidRefreshTokenMessage);
     }
 
     @Override

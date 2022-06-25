@@ -5,9 +5,8 @@ import com.goapi.goapi.domain.model.appService.tariff.UserApiTariff;
 import com.goapi.goapi.domain.model.appService.userApi.UserApi;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.exception.userApi.UserApiNotFoundException;
-import com.goapi.goapi.exception.userApi.UserApiOwnerException;
-import com.goapi.goapi.repo.userApi.UserApiRepository;
+import com.goapi.goapi.exception.appService.userApi.UserApiNotFoundException;
+import com.goapi.goapi.repo.appService.userApi.UserApiRepository;
 import com.goapi.goapi.service.interfaces.appService.userApi.UserApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,12 +35,6 @@ public class UserApiServiceImpl implements UserApiService {
     @Override
     public UserApi getUserApiByIdWithOwner(Integer apiId) {
         Optional<UserApi> userApi = userApiRepository.findUserApiByIdWithOwner(apiId);
-        return userApi.orElseThrow(() -> new UserApiNotFoundException(apiId));
-    }
-
-    @Override
-    public UserApi getUserApiByIdWithTariffAndOwner(Integer apiId) {
-        Optional<UserApi> userApi = userApiRepository.findUserApiByIdWithOwnerAndTariff(apiId);
         return userApi.orElseThrow(() -> new UserApiNotFoundException(apiId));
     }
 
@@ -81,23 +74,15 @@ public class UserApiServiceImpl implements UserApiService {
     }
 
     @Override
-    public boolean renameUserApi(UserApi userApi, String newUserApiName) {
-        userApi.setUserApiName(newUserApiName);
-        userApiRepository.save(userApi);
-        return true;
+    public int getTotalUserApisCount(User user) {
+        Integer userId = user.getId();
+        return userApiRepository.getTotalUserApisCount(userId);
     }
 
     @Override
-    public void isApiOwnerOrThrow(User user, UserApi api) {
-        if (!api.getOwner().equals(user)) {
-            Integer userId = user.getId();
-            throw new UserApiOwnerException(userId, api.getId());
-        }
+    public UserApi getUserApiByIdWithTariffAndOwner(Integer userApiTariffId) {
+        Optional<UserApi> userApi = userApiRepository.findUserApiByIdWithTariffAndOwner(userApiTariffId);
+        return userApi.orElseThrow(() -> new UserApiNotFoundException(userApiTariffId));
     }
 
-    @Override
-    public void setUserApiTariff(UserApi userApi, UserApiTariff newTariff) {
-        userApi.setUserApiTariff(newTariff);
-        userApiRepository.save(userApi);
-    }
 }

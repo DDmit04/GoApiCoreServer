@@ -1,9 +1,9 @@
 package com.goapi.goapi.service.implementation.appService.database;
 
-import com.goapi.goapi.domain.dto.tariff.DatabaseTariffDto;
+import com.goapi.goapi.domain.dto.appServiceobject.tariff.DatabaseTariffDto;
 import com.goapi.goapi.domain.model.appService.tariff.DatabaseTariff;
 import com.goapi.goapi.exception.tariff.database.DatabaseTariffNotFoundException;
-import com.goapi.goapi.repo.database.DatabaseTariffRepo;
+import com.goapi.goapi.repo.appService.database.DatabaseTariffRepo;
 import com.goapi.goapi.service.interfaces.appService.database.DatabaseTariffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class DatabaseTariffServiceImpl implements DatabaseTariffService {
             .map(tariff -> new DatabaseTariffDto(
                 tariff.getId(),
                 tariff.getTariff_name(),
-                tariff.getCostPerMonth(),
+                tariff.getCostPerDay(),
                 tariff.getMaxSizeBytes())
             )
             .collect(Collectors.toList());

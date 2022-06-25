@@ -2,7 +2,7 @@ package com.goapi.goapi.controller.controllers.userApi;
 
 import com.goapi.goapi.controller.forms.userApi.request.CreateApiRequestRequest;
 import com.goapi.goapi.controller.forms.userApi.request.UpdateApiRequestRequest;
-import com.goapi.goapi.domain.dto.userApi.UserApiRequestDto;
+import com.goapi.goapi.domain.dto.appServiceobject.userApi.UserApiRequestDto;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.service.interfaces.facade.userApi.UserApiRequestServiceFacade;
 import lombok.RequiredArgsConstructor;

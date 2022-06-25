@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class UserAuthForm {
 
-    @NotBlank(message = "dbUsername or email can't be empty!")
+    @NotBlank(message = "username or email can't be empty!")
     private String usernameOrEmail = "";
     @NotBlank(message = "password can't be empty!")
     private String password = "";

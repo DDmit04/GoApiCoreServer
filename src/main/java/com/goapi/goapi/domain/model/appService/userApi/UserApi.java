@@ -2,6 +2,7 @@ package com.goapi.goapi.domain.model.appService.userApi;
 
 import com.goapi.goapi.domain.model.appService.AppServiceObject;
 import com.goapi.goapi.domain.model.appService.database.Database;
+import com.goapi.goapi.domain.model.appService.tariff.Tariff;
 import com.goapi.goapi.domain.model.appService.tariff.UserApiTariff;
 import com.goapi.goapi.domain.model.appService.userApi.request.UserApiRequest;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
@@ -21,13 +22,11 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table
 @Getter
 @Setter
 @NamedEntityGraphs({
@@ -38,6 +37,13 @@ import java.util.Set;
         }
     ),
     @NamedEntityGraph(
+        name = "UserApi.owner.tariff",
+        attributeNodes = {
+            @NamedAttributeNode("owner"),
+            @NamedAttributeNode("appServiceTariff")
+        }
+    ),
+    @NamedEntityGraph(
         name = "UserApi.owner.requests",
         attributeNodes = {
             @NamedAttributeNode("owner"),
@@ -45,46 +51,50 @@ import java.util.Set;
         }
     ),
     @NamedEntityGraph(
-        name = "UserApi.owner.tariff",
+        name = "UserApi.bill.tariff",
         attributeNodes = {
-            @NamedAttributeNode("owner"),
-            @NamedAttributeNode("userApiTariff"),
+            @NamedAttributeNode("appServiceBill"),
+            @NamedAttributeNode("appServiceTariff")
         }
-    )
+    ),
+    @NamedEntityGraph(
+        name = "UserApi.tariff",
+        attributeNodes = {
+            @NamedAttributeNode("appServiceTariff")
+        }
+    ),
 })
 public class UserApi extends AppServiceObject {
 
-    @Column(name = "user_api_name")
-    private String userApiName;
-    @NotBlank
-    @Column(name = "api_key")
+    @NotBlank(message = "user api key can't be blank!")
+    @Column(nullable = false, name = "api_key")
     private String apiKey;
 
-    @Column(name = "is_protected")
+    @Column(nullable = false, name = "is_protected")
     private boolean isProtected;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "database_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "database_id")
     private Database database;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_api_tariff_id")
-    private UserApiTariff userApiTariff;
 
     @OneToMany(mappedBy = "userApi", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @LazyCollection(LazyCollectionOption.EXTRA)
     private Set<UserApiRequest> userApiRequests = new LinkedHashSet<>();
 
     public UserApi(String apiKey, boolean isProtected, Database database, UserApiTariff userApiTariff, String userApiName, User owner, AppServiceBill appServiceBill) {
-        super(owner, appServiceBill);
+        super(owner, appServiceBill, userApiName, userApiTariff);
         this.apiKey = apiKey;
-        this.userApiTariff = userApiTariff;
         this.isProtected = isProtected;
         this.database = database;
-        this.userApiName = userApiName;
     }
 
     public UserApi() {
+    }
+
+    @Override
+    public UserApiTariff getAppServiceTariff() {
+        Tariff appServiceTariff = super.getAppServiceTariff();
+        return (UserApiTariff) appServiceTariff;
     }
 
 }

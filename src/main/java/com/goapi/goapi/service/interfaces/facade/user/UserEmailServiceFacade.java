@@ -6,9 +6,7 @@ import com.goapi.goapi.domain.model.user.User;
 public interface UserEmailServiceFacade {
 
     void tryConfirmEmail(String emailConfirmCode);
-
     void requestConfirmEmail(User user);
-
     void tryChangeUserEmail(User user, UserEmailChangeForm userEmailChangeForm);
 
 }

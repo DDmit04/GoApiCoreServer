@@ -1,9 +1,9 @@
 package com.goapi.goapi.service.implementation.appService.userApi;
 
-import com.goapi.goapi.domain.dto.tariff.UserApiTariffDto;
+import com.goapi.goapi.domain.dto.appServiceobject.tariff.UserApiTariffDto;
 import com.goapi.goapi.domain.model.appService.tariff.UserApiTariff;
 import com.goapi.goapi.exception.tariff.userApi.UserApiTariffNotFoundException;
-import com.goapi.goapi.repo.userApi.ApiTariffRepository;
+import com.goapi.goapi.repo.appService.userApi.ApiTariffRepository;
 import com.goapi.goapi.service.interfaces.appService.userApi.UserApiTariffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class UserApiTariffServiceImpl implements UserApiTariffService {
             .map(tariff -> new UserApiTariffDto(
                 tariff.getId(),
                 tariff.getTariff_name(),
-                tariff.getCostPerMonth(),
+                tariff.getCostPerDay(),
                 tariff.getMaxRequestsCount())
             )
             .collect(Collectors.toList());

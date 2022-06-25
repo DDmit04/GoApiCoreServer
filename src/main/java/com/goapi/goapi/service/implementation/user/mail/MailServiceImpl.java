@@ -1,9 +1,9 @@
 package com.goapi.goapi.service.implementation.user.mail;
 
 import com.goapi.goapi.UrlUtils;
-import com.goapi.goapi.config.mail.props.EmailLocalizationSubjectNamesProperties;
-import com.goapi.goapi.config.mail.props.EmailTemplateNamesProperties;
 import com.goapi.goapi.domain.model.user.User;
+import com.goapi.goapi.props.mailProps.EmailLocalizationSubjectNamesProperties;
+import com.goapi.goapi.props.mailProps.EmailTemplateNamesProperties;
 import com.goapi.goapi.service.interfaces.user.mail.MailService;
 import com.goapi.goapi.service.interfaces.user.mail.MyMailSender;
 import lombok.RequiredArgsConstructor;

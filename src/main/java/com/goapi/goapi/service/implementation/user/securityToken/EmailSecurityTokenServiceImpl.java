@@ -51,7 +51,7 @@ public class EmailSecurityTokenServiceImpl implements EmailSecurityTokenService 
         Optional<EmailSecurityToken> token = emailConfirmSecurityTokenRepository.findByToken(tokenString);
         return token.map(tok -> {
             Integer tokenId = tok.getId();
-            boolean tokenValid = tok.isValid();
+            boolean tokenValid = tok.isIsValid();
             if (tokenValid) {
                 return tok;
             }

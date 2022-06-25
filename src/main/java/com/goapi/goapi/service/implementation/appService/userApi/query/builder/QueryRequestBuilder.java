@@ -3,18 +3,20 @@ package com.goapi.goapi.service.implementation.appService.userApi.query.builder;
 import com.goapi.goapi.domain.model.appService.userApi.request.RequestArgumentType;
 import com.goapi.goapi.domain.model.appService.userApi.request.UserApiRequest;
 import com.goapi.goapi.domain.model.appService.userApi.request.UserApiRequestArgument;
-import com.goapi.goapi.exception.userApi.requestArgument.UserApiRequestArgumentInvalidNameException;
-import com.goapi.goapi.exception.userApi.requestArgument.UserApiRequestArgumentMismatchException;
+import com.goapi.goapi.exception.appService.userApi.requestArgument.UserApiRequestArgumentInvalidNameException;
+import com.goapi.goapi.exception.appService.userApi.requestArgument.UserApiRequestArgumentMismatchException;
 import com.goapi.goapi.service.implementation.appService.userApi.query.argReplaceSuplier.TemplateArgumentReplaceSupplier;
 import com.goapi.goapi.service.implementation.appService.userApi.query.argReplaceSuplier.TemplateArgumentReplaceSupplierFactory;
 import com.goapi.goapi.service.implementation.appService.userApi.query.builder.queryElement.ArgQueryRequestStructureElement;
 import com.goapi.goapi.service.implementation.appService.userApi.query.builder.queryElement.QueryRequestStructureElement;
 import com.goapi.goapi.service.implementation.appService.userApi.query.builder.queryElement.RawQueryRequestStructureElement;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -24,7 +26,9 @@ import java.util.stream.Collectors;
 public class QueryRequestBuilder {
 
     private List<QueryRequestStructureElement> elementList;
-    private final Pattern templateArgPattern = Pattern.compile("\\$\\{\\S+\\}");
+    @Value("${string.request-arg-regex}")
+    private String requestArgRegex;
+    private final Pattern templateArgPattern = Pattern.compile(requestArgRegex);
 
 
     public QueryRequestBuilder(UserApiRequest userApiRequest) {
@@ -54,13 +58,14 @@ public class QueryRequestBuilder {
         }
     }
 
-    //TODO magic numbers
     private String getArgNameFromArgTemplate(String argTemplate) {
-        String argName = argTemplate.substring(2, argTemplate.length() - 1);
-        if(argName.length() <= 3) {
-            throw new UserApiRequestArgumentInvalidNameException();
+        Matcher matcher = templateArgPattern.matcher(argTemplate);
+        if (matcher.find())
+        {
+            String argName = matcher.group(1);
+            return argName;
         }
-        return argName;
+        throw new UserApiRequestArgumentInvalidNameException();
     }
 
     public void setArgument(String argName, Object argValue) {

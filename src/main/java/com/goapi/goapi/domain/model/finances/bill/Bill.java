@@ -14,23 +14,25 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @MappedSuperclass
 @Getter
 @Setter
-public class Bill {
+public abstract class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
     @Access(AccessType.PROPERTY)
     private Integer id;
 
-    @Column(name = "money_left", precision = 19, scale = 2)
+    @NotNull(message = "bill money left can't be null!")
+    @Column(nullable = false, name = "money_left", precision = 19, scale = 2)
+    @Access(AccessType.PROPERTY)
     private BigDecimal moneyLeft;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true, name = "user_id")
     private User user;
 
     public Bill(User user) {

@@ -1,8 +1,8 @@
 package com.goapi.goapi.service.interfaces.facade.userApi;
 
 import com.goapi.goapi.controller.forms.userApi.CreateUserApiRequest;
-import com.goapi.goapi.domain.dto.userApi.SummaryUserApiDto;
-import com.goapi.goapi.domain.dto.userApi.UserApiDto;
+import com.goapi.goapi.domain.dto.appServiceobject.userApi.SummaryUserApiDto;
+import com.goapi.goapi.domain.dto.appServiceobject.userApi.UserApiDto;
 import com.goapi.goapi.domain.model.user.User;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public interface UserApiServiceFacade {
 
     List<SummaryUserApiDto> getUserApisInfo(User user);
 
-    boolean renameUserApi(User user, Integer apiId, String newUserApiName);
+    void renameUserApi(User user, Integer apiId, String newUserApiName);
 
     UserApiDto getUserApiInfo(User user, Integer apiId);
 

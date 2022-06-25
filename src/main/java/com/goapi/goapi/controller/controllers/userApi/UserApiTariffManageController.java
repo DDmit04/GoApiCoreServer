@@ -1,6 +1,6 @@
 package com.goapi.goapi.controller.controllers.userApi;
 
-import com.goapi.goapi.domain.dto.tariff.UserApiTariffDto;
+import com.goapi.goapi.domain.dto.appServiceobject.tariff.UserApiTariffDto;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.service.interfaces.facade.userApi.UserApiTariffServiceFacade;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +32,8 @@ public class UserApiTariffManageController {
     public ResponseEntity changeUserApiTariff(@AuthenticationPrincipal User user,
                                               @PathVariable Integer tariffId,
                                               @PathVariable Integer apiId) {
-        boolean changed = userApiTariffServiceFacade.changeUserApiTariff(user, apiId, tariffId);
-        if(changed) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        userApiTariffServiceFacade.changeUserApiTariff(user, apiId, tariffId);
+        return ResponseEntity.ok().build();
     }
 
 }

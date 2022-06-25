@@ -3,6 +3,7 @@ package com.goapi.goapi.domain.model.appService.database;
 import com.example.DatabaseType;
 import com.goapi.goapi.domain.model.appService.AppServiceObject;
 import com.goapi.goapi.domain.model.appService.tariff.DatabaseTariff;
+import com.goapi.goapi.domain.model.appService.tariff.Tariff;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.user.User;
 import lombok.Getter;
@@ -13,19 +14,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Daniil Dmitrochenkov
  **/
-@Table
 @Entity
 @Getter
 @Setter
@@ -35,11 +32,15 @@ import javax.validation.constraints.NotBlank;
         attributeNodes = {
             @NamedAttributeNode("owner")
         }
-    )
+    ),
+    @NamedEntityGraph(
+        name = "Database.tariff",
+        attributeNodes = {
+            @NamedAttributeNode("appServiceTariff")
+        }
+    ),
 })
 public class Database extends AppServiceObject {
-    @NotBlank(message = "db name can't be blank!")
-    private String databaseName;
     @ColumnTransformer(
         read = """
             pgp_sym_decrypt(
@@ -55,25 +56,28 @@ public class Database extends AppServiceObject {
             """
     )
     @NotBlank(message = "db password can't be blank!")
-    @Column(columnDefinition = "bytea")
+    @Column(nullable = false, columnDefinition = "bytea")
     private String databasePassword;
+    @NotNull(message = "db type can't be null!")
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private DatabaseType databaseType;
-
-    @Column(name = "accept_external_connections")
+    @Column(nullable = false, name = "accept_external_connections")
     private boolean acceptExternalConnections;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tariff_id")
-    private DatabaseTariff dbTariff;
 
     public Database(User owner, AppServiceBill appServiceBill, String databaseName, String databasePassword, DatabaseType databaseType, DatabaseTariff dbTariff) {
-        super(owner, appServiceBill);
-        this.databaseName = databaseName;
+        super(owner, appServiceBill, databaseName, dbTariff);
         this.databasePassword = databasePassword;
         this.databaseType = databaseType;
-        this.dbTariff = dbTariff;
+        this.acceptExternalConnections = true;
     }
 
     public Database() {
+    }
+
+    @Override
+    public DatabaseTariff getAppServiceTariff() {
+        Tariff appServiceTariff = super.getAppServiceTariff();
+        return (DatabaseTariff) appServiceTariff;
     }
 }

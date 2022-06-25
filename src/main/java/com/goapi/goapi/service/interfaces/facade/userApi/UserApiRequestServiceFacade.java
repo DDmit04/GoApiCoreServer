@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.goapi.goapi.controller.forms.userApi.CallApiRequest;
 import com.goapi.goapi.controller.forms.userApi.request.CreateApiRequestRequest;
 import com.goapi.goapi.controller.forms.userApi.request.UpdateApiRequestRequest;
-import com.goapi.goapi.domain.dto.userApi.UserApiRequestDto;
+import com.goapi.goapi.domain.dto.appServiceobject.userApi.UserApiRequestDto;
 import com.goapi.goapi.domain.model.user.User;
 
 import java.util.List;

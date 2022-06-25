@@ -1,28 +1,21 @@
 package com.goapi.goapi.domain.model.appService.tariff;
 
-import com.goapi.goapi.domain.model.appService.userApi.UserApi;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.PositiveOrZero;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import javax.validation.constraints.Positive;
 
 @Entity
 @Getter
 @Setter
-@Table
 public class UserApiTariff extends Tariff {
-    @PositiveOrZero
-    @Column(name = "requests_count")
-    private Integer maxRequestsCount;
-
-    @OneToMany(mappedBy = "userApiTariff", orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<UserApi> userApis = new LinkedHashSet<>();
+    @Positive(message = "user api tariff max requests count must be positive!")
+    @Column(nullable = false, name = "requests_count")
+    @Access(AccessType.PROPERTY)
+    private int maxRequestsCount;
 
 }

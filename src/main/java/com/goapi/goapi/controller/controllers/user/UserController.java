@@ -4,9 +4,9 @@ import com.goapi.goapi.controller.forms.SecurityTokenForm;
 import com.goapi.goapi.controller.forms.user.UserRegForm;
 import com.goapi.goapi.controller.forms.user.UsernameOrEmailForm;
 import com.goapi.goapi.controller.forms.user.password.ResetUserPasswordForm;
-import com.goapi.goapi.domain.dto.payments.userBIll.UserBillDto;
+import com.goapi.goapi.domain.dto.finances.userBIll.UserBillDto;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.service.interfaces.facade.finances.BillServiceFacade;
+import com.goapi.goapi.service.interfaces.facade.finances.UserBillServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.user.UserEmailServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.user.UserPasswordServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.user.UserServiceFacade;
@@ -33,7 +33,7 @@ public class UserController {
     private final UserServiceFacade userServiceFacade;
     private final UserEmailServiceFacade userEmailServiceFacade;
     private final UserPasswordServiceFacade userPasswordServiceFacade;
-    private final BillServiceFacade billServiceFacade;
+    private final UserBillServiceFacade userBillServiceFacade;
 
     @PostMapping("/register")
     public ResponseEntity registerUser(@Valid @RequestBody UserRegForm userRegForm) {
@@ -63,7 +63,7 @@ public class UserController {
 
     @GetMapping("/bill")
     public ResponseEntity<UserBillDto> getUserBill(@AuthenticationPrincipal User user) {
-        UserBillDto userBillDto = billServiceFacade.getUserBillDto(user);
+        UserBillDto userBillDto = userBillServiceFacade.getUserBillDto(user);
         return ResponseEntity.ok(userBillDto);
     }
 }

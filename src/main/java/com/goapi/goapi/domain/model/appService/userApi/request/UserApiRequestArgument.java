@@ -25,20 +25,19 @@ import java.util.Objects;
 public class UserApiRequestArgument {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Integer id;
 
-    @NotBlank
-    @Column(name = "arg_name")
+    @NotBlank(message = "request argument name can't be blank!")
+    @Column(nullable = false, name = "arg_name")
     private String argName;
 
-    @NotNull
+    @NotNull(message = "request argument type can't be null!")
     @Enumerated(EnumType.STRING)
-    @Column(name = "request_argument_type")
+    @Column(nullable = false, name = "request_argument_type")
     private RequestArgumentType requestArgumentType;
 
-    @ManyToOne
-    @JoinColumn(name = "api_request_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false, name = "api_request_id")
     private UserApiRequest userApiRequest;
 
     public UserApiRequestArgument(String argName, RequestArgumentType requestArgumentType) {

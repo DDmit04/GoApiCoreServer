@@ -3,12 +3,12 @@ package com.goapi.goapi.controller.controllers.database;
 import com.goapi.goapi.controller.forms.RenameForm;
 import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
 import com.goapi.goapi.controller.forms.user.PasswordForm;
-import com.goapi.goapi.domain.dto.database.DatabaseDto;
-import com.goapi.goapi.domain.dto.database.SummaryDatabaseDto;
-import com.goapi.goapi.domain.dto.payments.appServiceBill.AppServiceBillDto;
+import com.goapi.goapi.domain.dto.appServiceobject.database.DatabaseDto;
+import com.goapi.goapi.domain.dto.appServiceobject.database.SummaryDatabaseDto;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.service.interfaces.facade.database.DatabaseServiceFacade;
-import com.goapi.goapi.service.interfaces.facade.finances.BillServiceFacade;
+import com.goapi.goapi.service.interfaces.facade.finances.AppServiceBillServiceFacade;
+import com.goapi.goapi.service.interfaces.facade.finances.PaymentsServiceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,8 +34,8 @@ import java.util.List;
 public class DatabaseController {
 
     private final DatabaseServiceFacade databaseServiceFacade;
-    private final BillServiceFacade billServiceFacade;
-
+    private final AppServiceBillServiceFacade appServiceBillServiceFacade;
+    private final PaymentsServiceFacade paymentsServiceFacade;
 
     @PostMapping
     public ResponseEntity<SummaryDatabaseDto> createDatabase(@AuthenticationPrincipal User user, @Valid @RequestBody CreateDatabaseForm createDbForm) {
@@ -62,12 +62,8 @@ public class DatabaseController {
     @PatchMapping("/{dbId}")
     public ResponseEntity<DatabaseDto> renameDatabase(@AuthenticationPrincipal User user, @Valid @RequestBody RenameForm renameForm, @PathVariable Integer dbId) {
         String newDatabaseName = renameForm.getName();
-        boolean renamed = databaseServiceFacade.renameDatabase(user, dbId, newDatabaseName);
-        if(renamed) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        databaseServiceFacade.renameDatabase(user, dbId, newDatabaseName);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{dbId}")
@@ -82,21 +78,12 @@ public class DatabaseController {
         return ResponseEntity.ok(summaryDatabaseDtoList);
     }
 
-    @GetMapping("/bill/{dbId}")
-    public ResponseEntity<AppServiceBillDto> getDatabaseBill(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
-        AppServiceBillDto billDto = billServiceFacade.getDatabaseBillDto(user, dbId);
-        return ResponseEntity.ok(billDto);
-    }
-
     @GetMapping("/{dbId}/password/reset")
     public ResponseEntity generateNewPasswordForDatabase(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
-        boolean updated = databaseServiceFacade.generateNewDbPassword(user, dbId);
-        if (updated) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        databaseServiceFacade.generateNewDatabasePassword(user, dbId);
+        return ResponseEntity.ok().build();
     }
+
     @GetMapping("/{dbId}/password")
     public ResponseEntity<PasswordForm> getDatabasePassword(@AuthenticationPrincipal User user, @PathVariable Integer dbId) {
         String password = databaseServiceFacade.getDatabasePassword(user, dbId);

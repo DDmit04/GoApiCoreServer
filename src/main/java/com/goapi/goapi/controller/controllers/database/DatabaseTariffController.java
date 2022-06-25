@@ -1,6 +1,6 @@
 package com.goapi.goapi.controller.controllers.database;
 
-import com.goapi.goapi.domain.dto.tariff.DatabaseTariffDto;
+import com.goapi.goapi.domain.dto.appServiceobject.tariff.DatabaseTariffDto;
 import com.goapi.goapi.service.interfaces.appService.database.DatabaseTariffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.goapi.goapi.domain.dto.database.DatabaseStatsDto;
+import com.goapi.goapi.domain.dto.appServiceobject.database.DatabaseStatsDto;
 import com.goapi.goapi.service.interfaces.grpc.ExternalDatabaseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Entity
@@ -15,7 +16,8 @@ import java.util.Date;
 @Setter
 public class EmailSecurityToken extends SecurityToken {
 
-    @Column(name = "confirming_email")
+    @NotBlank(message = "email security token confirming email can't be blank!")
+    @Column(nullable = false, name = "confirming_email")
     private String confirmingEmail;
 
     public EmailSecurityToken(String token, Date expire, User user, String confirmingEmail) {

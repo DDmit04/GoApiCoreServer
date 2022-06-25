@@ -13,6 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Objects;
 
@@ -24,23 +28,26 @@ public abstract class SecurityToken {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "token")
+    @NotBlank(message = "security token string can't be blank!")
+    @Column(nullable = false, name = "token")
     private String token;
 
-    @Column(name = "expire")
+    @NotNull(message = "security token expire date can't be null!")
+    @Column(nullable = false, name = "expire")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date expire;
 
-    @Column(name = "valid")
-    private boolean valid;
+    @Column(nullable = false, name = "valid")
+    private boolean isValid;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
     public SecurityToken(String token, Date expire, User user) {
         this.token = token;
         this.expire = expire;
-        this.valid = true;
+        this.isValid = true;
         this.user = user;
     }
 
@@ -51,8 +58,8 @@ public abstract class SecurityToken {
         return new Date().after(this.expire);
     }
 
-    public boolean isValid() {
-        return !isExpired() && valid;
+    public boolean isIsValid() {
+        return !isExpired() && isValid;
     }
 
     @Override

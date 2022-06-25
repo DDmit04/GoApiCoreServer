@@ -1,6 +1,6 @@
 package com.goapi.goapi.service.implementation.user;
 
-import com.goapi.goapi.controller.forms.user.auth.UserAuthInfo;
+import com.goapi.goapi.domain.dto.UserAuthDto;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.repo.UserRepo;
 import com.goapi.goapi.security.JwtUtils;
@@ -23,7 +23,7 @@ public class UserJwtServiceImpl implements UserJwtService {
     private final JwtUtils jwtTokenUtil;
 
     @Override
-    public UserAuthInfo refreshJwtTokens(User user) {
+    public UserAuthDto refreshJwtTokens(User user) {
         UUID newUuid = UUID.randomUUID();
         String newJwtRefreshToken = newUuid.toString();
         user = addJwtRefreshToken(user, newJwtRefreshToken);
@@ -31,7 +31,7 @@ public class UserJwtServiceImpl implements UserJwtService {
         newJwtRefreshToken = user.getJwtRefreshToken();
         String accessToken = jwtTokenUtil.generateAccessToken(username);
         String newRefreshToken = jwtTokenUtil.generateRefreshToken(newJwtRefreshToken);
-        return new UserAuthInfo(user, newRefreshToken, accessToken);
+        return new UserAuthDto(user, newRefreshToken, accessToken);
     }
 
     @Override

@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Entity
@@ -14,7 +15,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class PasswordSecurityToken extends SecurityToken {
-    @Column(name = "old_password")
+    @Column(nullable = false, name = "old_password")
+    @NotBlank(message = "password security token old password can't be blank!")
     private String oldPassword;
 
     public PasswordSecurityToken(String token, Date expire, User user, String oldPassword) {

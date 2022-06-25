@@ -43,18 +43,20 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(unique = true)
     @NotBlank(message = "username can't be blank!")
+    @Column(nullable = false, unique = true)
     private String username;
     @NotBlank(message = "password can't be blank!")
+    @Column(nullable = false)
     private String userPassword;
     @NotBlank(message = "email can't be blank!")
-    @Email
-    @Column(unique = true)
+    @Email(message = "user email must be email!")
+    @Column(nullable = false, unique = true)
     private String email;
-    @Column(name = "is_email_confirmed")
+    @Column(nullable = false, name = "is_email_confirmed")
     private boolean isEmailConfirmed;
-    @Column
+    @NotBlank(message = "usr JWT refresh token cant be blank!")
+    @Column(nullable = false)
     private String jwtRefreshToken;
 
     @OneToMany(mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
@@ -68,16 +70,16 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserApi> userApis = new LinkedHashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "bill_id")
+    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(nullable = false, name = "bill_id")
     private UserBill userBill;
 
-    @OneToOne(orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "email_token_id")
+    @OneToOne(optional = true, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true, name = "email_token_id")
     private EmailSecurityToken emailSecurityToken;
 
-    @OneToOne(orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "password_token_id")
+    @OneToOne(optional = true, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true, name = "password_token_id")
     private PasswordSecurityToken passwordSecurityToken;
 
     public User(String username, String userPassword, String email, Set<UserRoles> roles, UserBill userBill) {

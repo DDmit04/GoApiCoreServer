@@ -2,6 +2,7 @@ package com.goapi.goapi.controller.forms.user;
 
 import lombok.Getter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -10,10 +11,11 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class UserRegForm {
 
-    @NotBlank(message = "dbUsername can't be empty!")
-    private String username = "";
+    @NotBlank(message = "username can't be empty!")
+    private String username;
     @NotBlank(message = "email can't be empty!")
-    private String email = "";
+    @Email(message = "emial must be email!")
+    private String email;
     @NotBlank(message = "password can't be empty!")
-    private String password = "";
+    private String password;
 }

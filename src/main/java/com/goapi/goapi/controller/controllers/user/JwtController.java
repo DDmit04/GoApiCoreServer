@@ -1,6 +1,6 @@
 package com.goapi.goapi.controller.controllers.user;
 
-import com.goapi.goapi.controller.forms.user.auth.UserAuthInfo;
+import com.goapi.goapi.domain.dto.UserAuthDto;
 import com.goapi.goapi.service.interfaces.facade.user.UserServiceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +37,7 @@ public class JwtController {
     @PostMapping("${urls.jwr-refresh.path.final}")
     private ResponseEntity<Map<String, String>> refreshJwt(@CookieValue(name = "${tokens.name.refresh}") String refreshToken, HttpServletResponse response) {
 
-        UserAuthInfo userInfo = userServiceFacade.refreshJwtTokens(refreshToken);
+        UserAuthDto userInfo = userServiceFacade.refreshJwtTokens(refreshToken);
         String newRefreshToken = userInfo.getRefreshToken();
         String newAccessToken = userInfo.getAccessToken();
 

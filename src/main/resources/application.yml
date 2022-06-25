@@ -59,12 +59,24 @@ authorization:
   jwt:
     secret: BAD_SECRET
 
+thread:
+  pool-size: 20
+
 string:
   request-arg-pattern: "{%s}"
+  request-arg-regex: "{%s}"
+  payout-description: "Per day payout from app service bill"
+  payment-description-template: "Payment from user '%s' to app service bill with type '%s'"
+  invalid-refresh-token: "Refresh token is invalid!"
+  thread-prefix: "AppServiceTasksScheduler"
 
 limit:
   max-apis-count: 100
   max-databases-count: 100
+
+time:
+  payout-period: 20s
+  delete-disabled-period: 20s
 
 tokens:
   life:

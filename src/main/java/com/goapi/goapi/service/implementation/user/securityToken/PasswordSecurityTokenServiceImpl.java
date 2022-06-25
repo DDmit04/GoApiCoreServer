@@ -39,7 +39,7 @@ public class PasswordSecurityTokenServiceImpl implements PasswordSecurityTokenSe
         Optional<PasswordSecurityToken> token = passwordSecurityTokenRepository.findByToken(tokenString);
         return token.map(tok -> {
             Integer tokenId = tok.getId();
-            boolean tokenValid = tok.isValid();
+            boolean tokenValid = tok.isIsValid();
             if (tokenValid) {
                 return tok;
             }
