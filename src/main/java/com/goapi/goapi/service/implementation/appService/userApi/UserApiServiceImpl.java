@@ -25,9 +25,9 @@ public class UserApiServiceImpl implements UserApiService {
     private final UserApiRepository userApiRepository;
 
     @Override
-    public UserApi createUserApi(String apiName, boolean isProtected, UserApiTariff userApiTariff, Database db, User user, AppServiceBill userApiAppServiceBill) {
+    public UserApi createNewUserApi(User user, UserApiTariff userApiTariff, AppServiceBill userApiAppServiceBill, Database database, String apiName, boolean isProtected) {
         String apiKey = UUID.randomUUID().toString();
-        UserApi newUserApi = new UserApi(apiKey, isProtected, db, userApiTariff, apiName, user, userApiAppServiceBill);
+        UserApi newUserApi = new UserApi(apiKey, isProtected, database, userApiTariff, apiName, user, userApiAppServiceBill);
         newUserApi = userApiRepository.save(newUserApi);
         return newUserApi;
     }

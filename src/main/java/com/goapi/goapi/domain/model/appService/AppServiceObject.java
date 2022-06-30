@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -46,6 +47,13 @@ import java.util.Date;
         attributeNodes = {
             @NamedAttributeNode("owner"),
         }
+    ),
+    @NamedEntityGraph(
+        name = "AppServiceObject.owner.bill",
+        attributeNodes = {
+            @NamedAttributeNode("owner"),
+            @NamedAttributeNode("appServiceBill"),
+        }
     )
 })
 public class AppServiceObject {
@@ -67,7 +75,7 @@ public class AppServiceObject {
     @JoinColumn(nullable = false, name = "user_id")
     private User owner;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(nullable = false, name = "bill_id")
     private AppServiceBill appServiceBill;
 
@@ -79,6 +87,8 @@ public class AppServiceObject {
     private AppServiceObjectStatus appServiceObjectStatus;
 
     public AppServiceObject() {
+        this.appServiceObjectStatus = new AppServiceObjectStatus();
+        this.createdAt = new Date();
     }
 
     public AppServiceObject(User owner, AppServiceBill appServiceBill, String name, Tariff tariff) {
@@ -87,5 +97,16 @@ public class AppServiceObject {
         this.name = name;
         this.appServiceBill = appServiceBill;
         this.appServiceTariff = tariff;
+        this.appServiceObjectStatus = new AppServiceObjectStatus();
+    }
+
+    @Override
+    public String toString() {
+        return "AppServiceObject{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", createdAt=" + createdAt +
+            ", appServiceObjectStatus=" + appServiceObjectStatus +
+            '}';
     }
 }

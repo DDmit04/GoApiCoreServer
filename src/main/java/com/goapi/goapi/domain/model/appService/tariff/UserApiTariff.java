@@ -18,4 +18,10 @@ public class UserApiTariff extends Tariff {
     @Access(AccessType.PROPERTY)
     private int maxRequestsCount;
 
+    @Override
+    public String toString() {
+        return "(UserApiTariff{" +
+            "maxRequestsCount=" + maxRequestsCount +
+            '}' + super.toString() + ')';
+    }
 }

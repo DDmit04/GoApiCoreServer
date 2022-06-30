@@ -14,7 +14,7 @@ public interface ApiRequestRepository extends JpaRepository<UserApiRequest, Inte
 
     Optional<UserApiRequest> findByIdAndUserApi_Id(Integer requestId, Integer userApiId);
 
-    @Query(nativeQuery = true, value = "select * from user_api_request_argument where id = :requestId and api_request_id = :apiId")
+    @Query("from UserApiRequest req where req.id = :requestId")
     @EntityGraph("UserApiRequest.arguments")
-    Optional<UserApiRequest> findByIdAndUserApiIdWithArguments(@Param("requestId") Integer requestId, @Param("apiId") Integer apiId);
+    Optional<UserApiRequest> findByIdWithArguments(@Param("requestId") Integer requestId);
 }

@@ -12,10 +12,13 @@ import javax.validation.constraints.NotBlank;
 public class ResetUserPasswordForm extends SecurityTokenForm {
 
     @NotBlank(message = "new password can't be blank!")
-    private final String newPassword;
+    private String newPassword;
 
     public ResetUserPasswordForm(String token, String newPassword) {
         super(token);
         this.newPassword = newPassword;
+    }
+
+    public ResetUserPasswordForm() {
     }
 }

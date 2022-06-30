@@ -2,7 +2,7 @@ package com.goapi.goapi.service.implementation.finances.bill;
 
 import com.goapi.goapi.domain.model.finances.bill.UserBill;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.exception.finances.bill.userBill.UserBillNotFoundException;
+import com.goapi.goapi.exception.finances.bill.UserBillNotFoundException;
 import com.goapi.goapi.repo.finances.bill.UserBillRepository;
 import com.goapi.goapi.service.interfaces.finances.bill.UserBillService;
 import lombok.RequiredArgsConstructor;
@@ -22,20 +22,20 @@ public class UserBillServiceImpl implements UserBillService {
     @Override
     public UserBill createUserBill() {
         UserBill userBill = new UserBill();
-        return userBillRepository.save(userBill);
+        return userBill;
     }
     @Override
     public UserBill getUserBill(User user) {
-        Integer userId = user.getId();
-        Optional<UserBill> userBill = userBillRepository.findByUser_Id(userId);
-        return userBill.orElseThrow(() -> new UserBillNotFoundException(userId));
+        Integer bullId = user.getUserBill().getId();
+        Optional<UserBill> userBill = userBillRepository.findById(bullId);
+        return userBill.orElseThrow(() -> new UserBillNotFoundException(bullId));
     }
 
     @Override
     public UserBill getUserBillWithPayments(User user) {
-        Integer userId = user.getId();
-        Optional<UserBill> userBill = userBillRepository.findByUserIdWithPayments(userId);
-        return userBill.orElseThrow(() -> new UserBillNotFoundException(userId));
+        Integer billId = user.getUserBill().getId();
+        Optional<UserBill> userBill = userBillRepository.findByUserIdWithPayments(billId);
+        return userBill.orElseThrow(() -> new UserBillNotFoundException(billId));
     }
 
 }

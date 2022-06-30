@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public interface UserBillRepository extends JpaRepository<UserBill, Integer> {
 
-    Optional<UserBill> findByUser_Id(Integer userId);
+    Optional<UserBill> findById(Integer billId);
 
-    @Query(nativeQuery = true, value = "select * from user_bill bill where bill.user_id = :userId")
+    @Query("from UserBill ub where  ub.id = :billId")
     @EntityGraph("UserBill.payments")
-    Optional<UserBill> findByUserIdWithPayments(@Param("userId") Integer userId);
+    Optional<UserBill> findByUserIdWithPayments(@Param("billId") Integer billId);
 }

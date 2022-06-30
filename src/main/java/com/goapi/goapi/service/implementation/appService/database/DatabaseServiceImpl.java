@@ -1,7 +1,7 @@
 package com.goapi.goapi.service.implementation.appService.database;
 
 import com.example.DatabaseType;
-import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
+import com.goapi.goapi.controller.forms.database.CreateDatabaseRequest;
 import com.goapi.goapi.domain.model.appService.database.Database;
 import com.goapi.goapi.domain.model.appService.tariff.DatabaseTariff;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
@@ -46,7 +46,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public int getTotalUserDatabasesCount(User owner) {
         Integer userId = owner.getId();
-        return databaseRepo.getTotalUserDatabasesCount(userId);
+        return databaseRepo.countByOwner_Id(userId);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public Database createNewDatabase(User owner, DatabaseTariff tariff, AppServiceBill databaseAppServiceBill, CreateDatabaseForm dbForm) {
+    public Database createNewDatabase(User owner, DatabaseTariff tariff, AppServiceBill databaseAppServiceBill, CreateDatabaseRequest dbForm) {
         String newPassword = UUID.randomUUID().toString();
         DatabaseType databaseType = dbForm.getDatabaseType();
         String externalName = dbForm.getDbName();

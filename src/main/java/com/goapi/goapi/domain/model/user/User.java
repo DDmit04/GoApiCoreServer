@@ -10,6 +10,8 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -41,6 +43,7 @@ import java.util.Set;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Access(AccessType.PROPERTY)
     private Integer id;
 
     @NotBlank(message = "username can't be blank!")
@@ -55,18 +58,16 @@ public class User implements UserDetails {
     private String email;
     @Column(nullable = false, name = "is_email_confirmed")
     private boolean isEmailConfirmed;
+    @ElementCollection(targetClass = UserRoles.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<UserRoles> roles;
     @NotBlank(message = "usr JWT refresh token cant be blank!")
     @Column(nullable = false)
     private String jwtRefreshToken;
 
     @OneToMany(mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Database> databases = new LinkedHashSet<>();
-
-    @ElementCollection(targetClass = UserRoles.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
-    @Enumerated(EnumType.STRING)
-    private Set<UserRoles> roles;
-
     @OneToMany(mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserApi> userApis = new LinkedHashSet<>();
 
@@ -74,20 +75,19 @@ public class User implements UserDetails {
     @JoinColumn(nullable = false, name = "bill_id")
     private UserBill userBill;
 
-    @OneToOne(optional = true, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = true, name = "email_token_id")
-    private EmailSecurityToken emailSecurityToken;
+    @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<EmailSecurityToken> emailSecurityTokens = new LinkedHashSet<>();
 
-    @OneToOne(optional = true, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = true, name = "password_token_id")
-    private PasswordSecurityToken passwordSecurityToken;
+    @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<PasswordSecurityToken> passwordSecurityTokens = new LinkedHashSet<>();
 
-    public User(String username, String userPassword, String email, Set<UserRoles> roles, UserBill userBill) {
+    public User(String username, String userPassword, String email, Set<UserRoles> roles, UserBill userBill, String jwtRefreshToken) {
         this.username = username;
         this.userPassword = userPassword;
         this.email = email;
         this.roles = roles;
         this.userBill = userBill;
+        this.jwtRefreshToken = jwtRefreshToken;
     }
 
     public User() {
@@ -141,5 +141,17 @@ public class User implements UserDetails {
         result = 31 * result + getUsername().hashCode();
         result = 31 * result + getEmail().hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+            "id=" + id +
+            ", username='" + username + '\'' +
+            ", userPassword='" + userPassword + '\'' +
+            ", email='" + email + '\'' +
+            ", isEmailConfirmed=" + isEmailConfirmed +
+            ", roles=" + roles +
+            '}';
     }
 }

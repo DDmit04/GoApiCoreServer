@@ -21,16 +21,10 @@ public interface DatabaseRepo extends JpaRepository<Database, Integer> {
     @EntityGraph("Database.owner")
     Optional<Database> findDatabaseByIdWithOwner(@Param("databaseId") Integer databaseId);
 
-    @Query("select count(d) " +
-        "from Database d " +
-        "where d.owner.id = :userId")
-    int getTotalUserDatabasesCount(@Param(value = "userId") Integer userId);
+    int countByOwner_Id(Integer userId);
 
     @Query(selectDatabaseByIdQuery)
     @EntityGraph("Database.tariff")
     Optional<Database> findByIdWithTariff(@Param("databaseId") Integer databaseId);
 
-    @Query(selectDatabaseByIdQuery)
-    @EntityGraph("Database.bill.tariff")
-    Optional<Database> findByIdWithBillAndTariff(Integer databaseId);
 }

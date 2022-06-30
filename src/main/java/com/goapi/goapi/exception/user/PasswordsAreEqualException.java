@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * @author Daniil Dmitrochenkov
  **/
-@ResponseStatus(code = HttpStatus.UNAUTHORIZED, reason = "Old and new passwords are equal!")
+@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Old and new passwords are equal!")
 public class PasswordsAreEqualException extends RuntimeException {
 
     public PasswordsAreEqualException(Integer userId) {

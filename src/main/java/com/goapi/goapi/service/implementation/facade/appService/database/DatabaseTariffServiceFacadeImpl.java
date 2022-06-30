@@ -56,7 +56,7 @@ public class DatabaseTariffServiceFacadeImpl implements DatabaseTariffServiceFac
         DatabaseTariff dbTariff = db.getAppServiceTariff();
         DatabaseTariffDto databaseTariffDto = new DatabaseTariffDto(
             dbTariff.getId(),
-            dbTariff.getTariff_name(),
+            dbTariff.getTariffName(),
             dbTariff.getCostPerDay(),
             dbTariff.getMaxSizeBytes()
         );

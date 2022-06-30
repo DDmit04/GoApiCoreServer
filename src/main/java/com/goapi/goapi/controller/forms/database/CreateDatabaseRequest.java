@@ -11,7 +11,7 @@ import javax.validation.constraints.PositiveOrZero;
  * @author Daniil Dmitrochenkov
  **/
 @Getter
-public class CreateDatabaseForm {
+public class CreateDatabaseRequest {
 
     @NotBlank(message = "db name can't be empty!")
     private String dbName;
@@ -21,7 +21,7 @@ public class CreateDatabaseForm {
     @NotNull(message = "db type can't be null!")
     private DatabaseType databaseType;
 
-    public CreateDatabaseForm(String dbName, Integer tariffId, DatabaseType databaseType) {
+    public CreateDatabaseRequest(String dbName, Integer tariffId, DatabaseType databaseType) {
         this.dbName = dbName;
         this.tariffId = tariffId;
         this.databaseType = databaseType;

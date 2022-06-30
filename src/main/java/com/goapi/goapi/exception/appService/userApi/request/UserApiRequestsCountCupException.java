@@ -1,4 +1,4 @@
-package com.goapi.goapi.exception.appService.userApi;
+package com.goapi.goapi.exception.appService.userApi.request;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * @author Daniil Dmitrochenkov
  **/
-@ResponseStatus(code = HttpStatus.FORBIDDEN, reason = "User api requests count is max for any user")
+@ResponseStatus(code = HttpStatus.CONFLICT, reason = "User api requests count is max for any user")
 public class UserApiRequestsCountCupException extends RuntimeException {
 
     public UserApiRequestsCountCupException(Integer userApiId) {

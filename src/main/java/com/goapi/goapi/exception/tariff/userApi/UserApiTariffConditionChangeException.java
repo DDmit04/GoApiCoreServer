@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * @author Daniil Dmitrochenkov
  **/
-@ResponseStatus(code = HttpStatus.FORBIDDEN, reason = "User api tariff can't be changed")
+@ResponseStatus(code = HttpStatus.NOT_ACCEPTABLE, reason = "User api tariff can't be changed")
 public class UserApiTariffConditionChangeException extends RuntimeException {
 
     public UserApiTariffConditionChangeException(Integer newTariffId, Integer currentTariffId) {

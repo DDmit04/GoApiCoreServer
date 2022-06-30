@@ -15,6 +15,4 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 
     Optional<User> findUserByEmail(String newEmail);
 
-//    @Query("from User where User.id = :id")
-//    Optional<User> findUserByIdWithTariff(@Param("id") Integer userId);
 }

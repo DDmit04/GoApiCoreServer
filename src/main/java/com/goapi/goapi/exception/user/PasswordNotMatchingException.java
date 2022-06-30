@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * @author Daniil Dmitrochenkov
  **/
-@ResponseStatus(code = HttpStatus.UNAUTHORIZED, reason = "User password is invalid!")
+@ResponseStatus(code = HttpStatus.FORBIDDEN, reason = "User password is invalid!")
 public class PasswordNotMatchingException extends RuntimeException {
 
     public PasswordNotMatchingException(Integer userId) {

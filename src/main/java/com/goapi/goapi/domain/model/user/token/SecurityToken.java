@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,8 +39,8 @@ public abstract class SecurityToken {
     @Column(nullable = false, name = "valid")
     private boolean isValid;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     public SecurityToken(String token, Date expire, User user) {
@@ -52,6 +51,7 @@ public abstract class SecurityToken {
     }
 
     public SecurityToken() {
+        this.isValid = true;
     }
 
     public boolean isExpired() {
@@ -73,5 +73,14 @@ public abstract class SecurityToken {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "SecurityToken{" +
+            "id=" + id +
+            ", expire=" + expire +
+            ", isValid=" + isValid +
+            '}';
     }
 }

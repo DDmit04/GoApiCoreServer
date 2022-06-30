@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface EmailSecurityTokenService {
 
     EmailSecurityToken createNewEmailConfirmToken(User user);
-    EmailSecurityToken createNewEmailChangeToken(User user);
+    EmailSecurityToken createNewEmailChangeToken(User user, String email);
     EmailSecurityToken findEmailToken(String tokenString);
     void invalidateEmailToken(EmailSecurityToken token);
 }

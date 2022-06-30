@@ -13,11 +13,11 @@ import com.discover.ExternalDatabaseServiceGrpc;
 import com.discover.GrpcDatabaseType;
 import com.example.DatabaseType;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.goapi.goapi.domain.dto.appServiceobject.database.DatabaseStatsDto;
+import com.goapi.goapi.exception.UserApiRequestResponseException;
 import com.goapi.goapi.service.interfaces.grpc.ExternalDatabaseService;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Value;
@@ -133,12 +133,8 @@ public class ExternalDatabaseServiceImpl implements ExternalDatabaseService {
             String jsonString = JsonFormat.printer().print(structData);
             ArrayNode result = (ArrayNode) mapper.readTree(jsonString);
             return result;
-        } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException(e);
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        } catch (InvalidProtocolBufferException | JsonProcessingException e) {
+            throw new UserApiRequestResponseException(dbId, finalTemplate);
         }
     }
 

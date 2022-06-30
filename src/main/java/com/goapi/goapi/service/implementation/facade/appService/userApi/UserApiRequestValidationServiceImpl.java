@@ -6,8 +6,8 @@ import com.goapi.goapi.controller.forms.userApi.argument.UserApiRequestArgumentD
 import com.goapi.goapi.controller.forms.userApi.request.CreateApiRequestRequest;
 import com.goapi.goapi.controller.forms.userApi.request.UpdateApiRequestRequest;
 import com.goapi.goapi.domain.model.appService.userApi.UserApi;
-import com.goapi.goapi.exception.appService.userApi.UserApiTariffRequestsCountCupException;
 import com.goapi.goapi.exception.appService.userApi.request.UserApiRequestArgNotUsedTemplateException;
+import com.goapi.goapi.exception.appService.userApi.request.UserApiRequestsCountCupException;
 import com.goapi.goapi.exception.appService.userApi.requestArgument.UserApiRequestArgumentInvalidNameException;
 import com.goapi.goapi.exception.appService.userApi.requestArgument.UserApiRequestArgumentsNotUniqueException;
 import com.goapi.goapi.service.interfaces.appService.userApi.UserApiService;
@@ -99,7 +99,7 @@ public class UserApiRequestValidationServiceImpl implements UserApiRequestValida
         int totalUserRequestsCount = userApiService.getUserApiRequestsCountById(userApiId);
         boolean lowerThanMaxApisCountTariff = totalUserRequestsCount < tariffMaxRequestsCount;
         if (!lowerThanMaxApisCountTariff) {
-            throw new UserApiTariffRequestsCountCupException(userApiId);
+            throw new UserApiRequestsCountCupException(userApiId);
         }
     }
 

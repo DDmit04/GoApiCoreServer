@@ -49,13 +49,14 @@ public class UserEmailServiceFacadeFacadeImpl implements UserEmailServiceFacade 
             String newEmail = userEmailChangeForm.getEmail();
             String userEmail = user.getEmail();
             boolean emailExists = userService.checkEmailExists(newEmail);
-            boolean emailIsNew = userEmail.equals(newEmail);
-            boolean canChangeEmail = emailIsNew && !emailExists;
+            boolean emailIsOld = userEmail.equals(newEmail);
+            boolean canChangeEmail = !emailIsOld && !emailExists;
             if(canChangeEmail) {
-                EmailSecurityToken newEmailConfirmToken = emailSecurityTokenService.createNewEmailChangeToken(user);
+                EmailSecurityToken newEmailConfirmToken = emailSecurityTokenService.createNewEmailChangeToken(user, newEmail);
                 String tokenString = newEmailConfirmToken.getToken();
                 mailService.sendEmailChangeCode(user, tokenString);
             }
+        } else {
             Integer userId = user.getId();
             throw new PasswordNotMatchingException(userId);
         }

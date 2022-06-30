@@ -79,15 +79,9 @@ public class AppServiceObjectServiceImpl implements AppServiceObjectService {
         appServiceObjectRepository.save(appServiceObject);
     }
 
-    @Override
-    public AppServiceObject getAppServiceObjectByIdWithOwner(Integer appServiceId) {
-        Optional<AppServiceObject> appServiceObjectOptional = appServiceObjectRepository.findAppServiceObjectByIdWithOwner(appServiceId);
-        return appServiceObjectOptional.orElseThrow(() -> new AppServiceObjectNotFoundException(appServiceId));
-    }
-
     private void setAppServiceObjectDisabled(AppServiceObject appServiceObject, AppServiceStatusType appServiceStatusType) {
         AppServiceObjectStatus appServiceObjectStatus = appServiceObject.getAppServiceObjectStatus();
-        appServiceObjectStatus.setStatus(AppServiceStatusType.DISABLED);
+        appServiceObjectStatus.setStatus(appServiceStatusType);
         appServiceObjectStatus.setStatusDate(Timestamp.valueOf(LocalDateTime.now()));
         appServiceObjectRepository.save(appServiceObject);
     }

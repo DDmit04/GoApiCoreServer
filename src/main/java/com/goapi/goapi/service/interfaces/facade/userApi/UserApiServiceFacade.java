@@ -4,11 +4,16 @@ import com.goapi.goapi.controller.forms.userApi.CreateUserApiRequest;
 import com.goapi.goapi.domain.dto.appServiceobject.userApi.SummaryUserApiDto;
 import com.goapi.goapi.domain.dto.appServiceobject.userApi.UserApiDto;
 import com.goapi.goapi.domain.model.user.User;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 public interface UserApiServiceFacade {
-    SummaryUserApiDto createApi(User user, CreateUserApiRequest createUserApiRequest);
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    SummaryUserApiDto createNewUserApi(User user, CreateUserApiRequest createUserApiRequest);
 
     boolean deleteApi(User user, Integer apiId);
 

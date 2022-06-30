@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface UserService extends UserDetailsService {
 
-    User addNewUser(UserRegForm userRegForm, UserBill userAppServiceBill);
+    User addNewUser(UserRegForm userRegForm, UserBill userBill);
     @Override
     UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException;
     void confirmEmail(EmailSecurityToken emailSecurityToken);

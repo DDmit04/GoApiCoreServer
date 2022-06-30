@@ -36,7 +36,7 @@ public class UserApiManageController {
 
     @PostMapping
     public ResponseEntity createUserApi(@AuthenticationPrincipal User user, @RequestBody CreateUserApiRequest createUserApiRequest) {
-        SummaryUserApiDto apiDto = userApiServiceFacade.createApi(user, createUserApiRequest);
+        SummaryUserApiDto apiDto = userApiServiceFacade.createNewUserApi(user, createUserApiRequest);
         return ResponseEntity.ok(apiDto);
     }
 

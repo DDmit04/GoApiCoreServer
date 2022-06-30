@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,9 +37,10 @@ public class UserApiRequestArgument {
     @Column(nullable = false, name = "request_argument_type")
     private RequestArgumentType requestArgumentType;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false, name = "api_request_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_api_request_id")
     private UserApiRequest userApiRequest;
+
 
     public UserApiRequestArgument(String argName, RequestArgumentType requestArgumentType) {
         this.argName = argName;

@@ -8,19 +8,21 @@ import com.goapi.goapi.domain.model.appService.tariff.Tariff;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.finances.bill.BillType;
 import com.goapi.goapi.domain.model.finances.bill.UserBill;
+import com.goapi.goapi.domain.model.finances.payment.AppServicePayment;
 import com.goapi.goapi.domain.model.user.User;
-import com.goapi.goapi.exception.finances.payment.AppServicePaymentRejectedException;
-import com.goapi.goapi.exception.finances.payment.PaymentProcessingException;
+import com.goapi.goapi.exception.finances.PaymentRejectedException;
 import com.goapi.goapi.service.interfaces.appService.AppServiceObjectService;
 import com.goapi.goapi.service.interfaces.appService.appServiceTasks.AppServiceTaskServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.finances.PaymentsServiceFacade;
 import com.goapi.goapi.service.interfaces.finances.bill.UserBillService;
 import com.goapi.goapi.service.interfaces.finances.payment.AppServicePaymentService;
+import com.goapi.goapi.service.interfaces.finances.payment.PaymentProcessingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 
 /**
@@ -34,11 +36,12 @@ public class PaymentsServiceFacadeImpl implements PaymentsServiceFacade {
     private final AppServiceObjectService appServiceObjectService;
     private final UserBillService userBillService;
     private final AppServiceTaskServiceFacade appServiceTaskServiceFacade;
+
+    private final PaymentProcessingService paymentProcessingService;
     @Value("${string.payment-description-template}")
     private String paymentDescriptionTemplate;
 
     @Override
-    @Transactional
     public void makeAppServicePayment(User user, AppServicePaymentData appServicePaymentData) {
         Integer appServiceId = appServicePaymentData.getAppServiceId();
         AppServiceObject appServiceObject = appServiceObjectService.getAppServiceObjectByIdWithTariffAndBill(appServiceId);
@@ -78,9 +81,10 @@ public class PaymentsServiceFacadeImpl implements PaymentsServiceFacade {
         BillType appBillType = appServiceBill.getBillType();
         String paymentDesc = String.format(paymentDescriptionTemplate, username, appBillType.toString());
         try {
-            appServicePaymentService.createAppServiceBillPayment(paymentSum, paymentDesc, userBill, appServiceBill);
-        } catch (AppServicePaymentRejectedException e) {
-            throw new PaymentProcessingException(user.getId(), appServiceObject, paymentSum);
+            AppServicePayment appServicePayment = appServicePaymentService.createAppServicePayment(paymentSum, paymentDesc, userBill, appServiceBill);
+            paymentProcessingService.processAppServicePayment(appServicePayment);
+        } catch (PaymentRejectedException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
     }
 

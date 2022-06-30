@@ -60,7 +60,7 @@ public class UserApiRequest {
     @Column(nullable = false, name = "http_method")
     private HttpMethod httpMethod;
 
-    @OneToMany(mappedBy = "userApiRequest", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userApiRequest", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserApiRequestArgument> userApiRequestArguments = new LinkedHashSet<>();
 
     public UserApiRequest(UserApi userApi, String requestName, String requestTemplate, HttpMethod httpMethod, Set<UserApiRequestArgument> userApiRequestArguments) {

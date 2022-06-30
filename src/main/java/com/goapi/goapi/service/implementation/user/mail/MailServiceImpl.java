@@ -109,9 +109,10 @@ public class MailServiceImpl implements MailService {
     public boolean sendEmailChangeCode(User user, String code) {
         Locale locale = LocaleContextHolder.getLocale();
         String username = user.getUsername();
+        String emailConfirmLink = getAccountConfirmLink(code);
         Map<String, Object> templateModel = new HashMap<>() {{
             put("username", username);
-            put("emailChangeLink", code);
+            put("emailChangeLink", emailConfirmLink);
         }};
         String accountConfirmedPropName = emailLocalizationSubjectNamesProperties.getEmailChange();
         String accountConfirmedSubject = createEmailSubject(accountConfirmedPropName, locale);

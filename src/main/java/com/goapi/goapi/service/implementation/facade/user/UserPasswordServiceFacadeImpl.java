@@ -57,9 +57,10 @@ public class UserPasswordServiceFacadeImpl implements UserPasswordServiceFacade 
             userService.updatePassword(user, newPassword);
             passwordSecurityTokenService.invalidatePasswordResetToken(passwordResetToken);
             mailService.sendPasswordSuccessfullyChanged(user);
+        } else {
+            Integer userId = user.getId();
+            throw new PasswordsAreEqualException(userId);
         }
-        Integer userId = user.getId();
-        throw new PasswordsAreEqualException(userId);
     }
 
     @Override
@@ -78,8 +79,9 @@ public class UserPasswordServiceFacadeImpl implements UserPasswordServiceFacade 
             mailService.sendPasswordSuccessfullyChanged(user);
         } else if(newPasswordMatch) {
             throw new PasswordsAreEqualException(userId);
+        } else {
+            throw new PasswordNotMatchingException(userId);
         }
-        throw new PasswordNotMatchingException(userId);
     }
 
 }

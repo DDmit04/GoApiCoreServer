@@ -80,4 +80,12 @@ public class Database extends AppServiceObject {
         Tariff appServiceTariff = super.getAppServiceTariff();
         return (DatabaseTariff) appServiceTariff;
     }
+
+    @Override
+    public String toString() {
+        return "(Database{" +
+            "databaseType=" + databaseType +
+            ", acceptExternalConnections=" + acceptExternalConnections +
+            '}' + super.toString() + ')';
+    }
 }

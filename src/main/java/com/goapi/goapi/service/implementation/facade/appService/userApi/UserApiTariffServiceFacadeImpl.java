@@ -31,7 +31,7 @@ public class UserApiTariffServiceFacadeImpl implements UserApiTariffServiceFacad
         UserApiTariff userApiTariff = userApi.getAppServiceTariff();
         UserApiTariffDto userApiTariffDto = new UserApiTariffDto(
             userApiTariff.getId(),
-            userApiTariff.getTariff_name(),
+            userApiTariff.getTariffName(),
             userApiTariff.getCostPerDay(),
             userApiTariff.getMaxRequestsCount());
         return userApiTariffDto;

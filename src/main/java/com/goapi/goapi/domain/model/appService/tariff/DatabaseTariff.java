@@ -17,4 +17,11 @@ public class DatabaseTariff extends Tariff {
     @PositiveOrZero(message = "db size must be more than 0!")
     @Column(nullable = false)
     private long maxSizeBytes;
+
+    @Override
+    public String toString() {
+        return "(DatabaseTariff{" +
+            "maxSizeBytes=" + maxSizeBytes +
+            '}' + super.toString() + ')';
+    }
 }

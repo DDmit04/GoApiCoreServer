@@ -10,7 +10,6 @@ import com.goapi.goapi.domain.model.appService.database.Database;
 import com.goapi.goapi.domain.model.appService.tariff.UserApiTariff;
 import com.goapi.goapi.domain.model.appService.userApi.UserApi;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
-import com.goapi.goapi.domain.model.finances.bill.BillType;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.exception.appService.userApi.UserApisCountCupException;
 import com.goapi.goapi.service.interfaces.appService.AppServiceObjectService;
@@ -21,6 +20,7 @@ import com.goapi.goapi.service.interfaces.appService.userApi.UserApiUtilsService
 import com.goapi.goapi.service.interfaces.facade.finances.PaymentsServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.userApi.UserApiServiceFacade;
 import com.goapi.goapi.service.interfaces.finances.bill.AppServiceBillService;
+import com.goapi.goapi.service.interfaces.finances.bill.UserBillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
@@ -44,22 +44,23 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
     private final DatabaseService databaseService;
     private final UserApiUtilsService userApiUtilsService;
     private final AppServiceBillService appServiceBillService;
+    private final UserBillService userBillService;
+
     @Value("${limit.max-apis-count}")
     private int userMaxApisCount;
 
     @Override
-    public SummaryUserApiDto createApi(User user, CreateUserApiRequest createUserApiRequest) {
-        Integer dbId = createUserApiRequest.getDatabaseId();
-        BillType billType = BillType.USER_API;
-        Integer tariffId = createUserApiRequest.getTariffId();
-        boolean isProtected = createUserApiRequest.isProtected();
-        String userApiName = createUserApiRequest.getName();
-        Database database = databaseService.getDatabaseById(dbId);
-        UserApiTariff userApiTariff = userApiTariffService.getUserApiTariffById(tariffId);
+    public SummaryUserApiDto createNewUserApi(User user, CreateUserApiRequest createUserApiRequest) {
         int currentUserApisCount = userApiService.getTotalUserApisCount(user);
         if(currentUserApisCount <= userMaxApisCount) {
-            AppServiceBill userApiAppServiceBill = appServiceBillService.createAppServiceBill(user, billType);
-            UserApi userApi = userApiService.createUserApi(userApiName, isProtected, userApiTariff, database, user, userApiAppServiceBill);
+            Integer dbId = createUserApiRequest.getDatabaseId();
+            Integer tariffId = createUserApiRequest.getTariffId();
+            UserApiTariff userApiTariff = userApiTariffService.getUserApiTariffById(tariffId);
+            boolean isProtected = createUserApiRequest.isProtected();
+            String userApiName = createUserApiRequest.getName();
+            Database database = databaseService.getDatabaseById(dbId);
+            AppServiceBill userApiAppServiceBill = appServiceBillService.createUserApiBill();
+            UserApi userApi = userApiService.createNewUserApi(user, userApiTariff, userApiAppServiceBill, database, userApiName, isProtected);
             paymentsServiceFacade.makeFirstAppServicePayment(user, userApi);
             SummaryUserApiDto apiDto = getSummaryUserApiDto(userApi);
             return apiDto;

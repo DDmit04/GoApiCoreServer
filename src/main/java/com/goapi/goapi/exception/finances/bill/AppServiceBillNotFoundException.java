@@ -1,6 +1,5 @@
-package com.goapi.goapi.exception.finances.bill.appServiceBill;
+package com.goapi.goapi.exception.finances.bill;
 
-import com.goapi.goapi.domain.model.finances.bill.BillType;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -14,7 +13,4 @@ public class AppServiceBillNotFoundException extends RuntimeException {
         super(String.format("App service bill with id = '%s' not found!", billId));
     }
 
-    public AppServiceBillNotFoundException(Integer userId, BillType billType) {
-        super(String.format("App service bill with type = '%s' for user with id = '%s' not found!", userId, billType));
-    }
 }

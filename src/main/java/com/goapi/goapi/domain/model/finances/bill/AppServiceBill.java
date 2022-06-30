@@ -3,7 +3,6 @@ package com.goapi.goapi.domain.model.finances.bill;
 import com.goapi.goapi.domain.model.appService.AppServiceObject;
 import com.goapi.goapi.domain.model.finances.payment.AppServicePayment;
 import com.goapi.goapi.domain.model.finances.payment.AppServicePayout;
-import com.goapi.goapi.domain.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,15 +32,8 @@ import java.util.Set;
 @Setter
 @NamedEntityGraphs({
     @NamedEntityGraph(
-        name = "AppServiceBill.user",
-        attributeNodes = {
-            @NamedAttributeNode("user")
-        }
-    ),
-    @NamedEntityGraph(
         name = "AppServiceBill.payments",
         attributeNodes = {
-            @NamedAttributeNode("user"),
             @NamedAttributeNode("toAppServicePayments"),
             @NamedAttributeNode("appServicePayouts")
         }
@@ -54,12 +46,6 @@ public class AppServiceBill extends Bill {
     @Access(AccessType.PROPERTY)
     private BillType billType;
 
-    @OneToMany(mappedBy = "toAppServiceBill", orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<AppServicePayment> toAppServicePayments = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "appServiceBill", orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<AppServicePayout> appServicePayouts = new LinkedHashSet<>();
-
     @Column(nullable = false, name = "last_payout_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastPayoutDate;
@@ -67,12 +53,26 @@ public class AppServiceBill extends Bill {
     @OneToOne(optional = false, fetch = FetchType.LAZY, mappedBy = "appServiceBill")
     private AppServiceObject appServiceObject;
 
-    public AppServiceBill(User user, BillType billType) {
-        super(user);
+    @OneToMany(mappedBy = "toAppServiceBill", orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<AppServicePayment> toAppServicePayments = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "appServiceBill", orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<AppServicePayout> appServicePayouts = new LinkedHashSet<>();
+
+    public AppServiceBill(BillType billType) {
+        this.lastPayoutDate = new Date();
         this.billType = billType;
     }
 
     public AppServiceBill() {
+        this.lastPayoutDate = new Date();
     }
 
+    @Override
+    public String toString() {
+        return "(AppServiceBill{" +
+            "billType=" + billType +
+            ", lastPayoutDate=" + lastPayoutDate +
+            '}' + super.toString() + ')';
+    }
 }

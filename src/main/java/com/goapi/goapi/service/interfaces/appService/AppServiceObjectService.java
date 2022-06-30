@@ -13,11 +13,11 @@ public interface AppServiceObjectService {
     List<AppServiceObject> getAllAppServiceObjects();
     AppServiceObject getAppServiceObjectById(Integer appServiceId);
     AppServiceObject getAppServiceObjectByIdWithTariffAndBill(Integer appServiceId);
-    AppServiceObject getAppServiceObjectByIdWithOwner(Integer apiId);
     void disableAppServiceObject(AppServiceObject appServiceObject);
     void enableAppServiceObject(AppServiceObject appServiceObject);
     boolean isAppServiceObjectOwnerOrThrow(User user, AppServiceObject appServiceObject);
     void renameAppServiceObjectApi(AppServiceObject appServiceObject, String newName);
     void deleteAppServiceObjectById(Integer appServiceObjectId);
     void changeAppServiceObjectTariff(AppServiceObject appServiceObject, Tariff newTariff);
+
 }

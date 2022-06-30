@@ -1,16 +1,15 @@
 package com.goapi.goapi.domain.model.finances.payment;
 
-import com.goapi.goapi.domain.entityListeners.UserPaymentEntityListener;
 import com.goapi.goapi.domain.model.finances.bill.UserBill;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -22,10 +21,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@EntityListeners(UserPaymentEntityListener.class)
 public class UserPayment extends Payment {
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(nullable = false, name = "user_bill_id")
     private UserBill userBill;
 

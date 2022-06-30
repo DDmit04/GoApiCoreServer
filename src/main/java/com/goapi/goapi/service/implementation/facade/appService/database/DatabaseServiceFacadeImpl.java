@@ -1,7 +1,7 @@
 package com.goapi.goapi.service.implementation.facade.appService.database;
 
 import com.example.DatabaseType;
-import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
+import com.goapi.goapi.controller.forms.database.CreateDatabaseRequest;
 import com.goapi.goapi.domain.dto.appServiceobject.AppServiceObjectStatusDto;
 import com.goapi.goapi.domain.dto.appServiceobject.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.appServiceobject.database.DatabaseStatsDto;
@@ -10,7 +10,6 @@ import com.goapi.goapi.domain.model.appService.AppServiceObjectStatus;
 import com.goapi.goapi.domain.model.appService.database.Database;
 import com.goapi.goapi.domain.model.appService.tariff.DatabaseTariff;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
-import com.goapi.goapi.domain.model.finances.bill.BillType;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.exception.appService.database.UserDatabasesCountCupException;
 import com.goapi.goapi.service.interfaces.appService.AppServiceObjectService;
@@ -19,6 +18,7 @@ import com.goapi.goapi.service.interfaces.appService.database.DatabaseTariffServ
 import com.goapi.goapi.service.interfaces.facade.database.DatabaseServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.finances.PaymentsServiceFacade;
 import com.goapi.goapi.service.interfaces.finances.bill.AppServiceBillService;
+import com.goapi.goapi.service.interfaces.finances.bill.UserBillService;
 import com.goapi.goapi.service.interfaces.grpc.ExternalDatabaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,21 +41,21 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
     private final DatabaseTariffService databaseTariffService;
     private final ExternalDatabaseService externalDatabaseService;
     private final AppServiceBillService appServiceBillService;
+    private final UserBillService userBillService;
 
     @Value("${limit.max-databases-count}")
     private int maxDatabasesCount;
 
     @Override
-    public DatabaseDto createNewDatabase(User user, CreateDatabaseForm dbForm) {
-        Integer tariffId = dbForm.getTariffId();
-        BillType billType = BillType.DATABASE;
-        DatabaseTariff tariff = databaseTariffService.getDatabaseTariffById(tariffId);
-        AppServiceBill databaseBill = appServiceBillService.createAppServiceBill(user, billType);
+    public DatabaseDto createNewDatabase(User user, CreateDatabaseRequest createDatabaseRequest) {
         int totalUserDatabasesCount = databaseService.getTotalUserDatabasesCount(user);
         if (totalUserDatabasesCount < maxDatabasesCount) {
-            Database newDatabase = databaseService.createNewDatabase(user, tariff, databaseBill, dbForm);
+            Integer tariffId = createDatabaseRequest.getTariffId();
+            DatabaseTariff tariff = databaseTariffService.getDatabaseTariffById(tariffId);
+            AppServiceBill databaseBill = appServiceBillService.createDatabaseBill();
+            Database newDatabase = databaseService.createNewDatabase(user, tariff, databaseBill, createDatabaseRequest);
             Integer newDbId = newDatabase.getId();
-            DatabaseType databaseType = dbForm.getDatabaseType();
+            DatabaseType databaseType = createDatabaseRequest.getDatabaseType();
             String newPassword = UUID.randomUUID().toString();
             long maxSizeBytes = tariff.getMaxSizeBytes();
             DatabaseStatsDto databaseStatsDto = externalDatabaseService.createExternalDatabase(maxSizeBytes, databaseType, newDbId, newPassword);
@@ -101,7 +101,7 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
 
     @Override
     public boolean deleteDatabase(User user, Integer dbId) {
-        Database db = getDatabaseCheckOwner(user, dbId);
+        getDatabaseCheckOwner(user, dbId);
         boolean deleted = externalDatabaseService.dropExternalDatabase(dbId);
         if (deleted) {
             databaseService.deleteDatabaseById(dbId);

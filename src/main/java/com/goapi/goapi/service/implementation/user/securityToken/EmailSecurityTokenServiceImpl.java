@@ -40,8 +40,8 @@ public class EmailSecurityTokenServiceImpl implements EmailSecurityTokenService 
 
 
     @Override
-    public EmailSecurityToken createNewEmailChangeToken(User user) {
-        EmailSecurityToken securityToken = createEmailConfirmToken(user, emailChangeTokenLifetime);
+    public EmailSecurityToken createNewEmailChangeToken(User user, String email) {
+        EmailSecurityToken securityToken = createEmailConfirmToken(user, email, emailChangeTokenLifetime);
         return securityToken;
     }
 
@@ -66,14 +66,18 @@ public class EmailSecurityTokenServiceImpl implements EmailSecurityTokenService 
         emailConfirmSecurityTokenRepository.save(token);
     }
 
-    private EmailSecurityToken createEmailConfirmToken(User user, int lifetime) {
+    private EmailSecurityToken createEmailConfirmToken(User user, String userEmail, int lifetime) {
         UUID newUuid = UUID.randomUUID();
         String uuidString = newUuid.toString();
-        String userEmail = user.getEmail();
         Date expireDate = Timestamp.valueOf(LocalDateTime.now().plusSeconds(lifetime));
         EmailSecurityToken securityToken = new EmailSecurityToken(uuidString, expireDate, user, userEmail);
         securityToken = emailConfirmSecurityTokenRepository.save(securityToken);
         return securityToken;
+    }
+
+    private EmailSecurityToken createEmailConfirmToken(User user, int lifetime) {
+        String userEmail = user.getEmail();
+        return createEmailConfirmToken(user, userEmail, lifetime);
     }
 
 }

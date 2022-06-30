@@ -28,8 +28,9 @@ public class CommonApiTaskService implements AppServiceTaskService {
         Integer apiId = appServiceObject.getId();
         AppServiceBill appServiceBill = appServiceObject.getAppServiceBill();
         Date lastPayoutDate = appServiceBill.getLastPayoutDate();
+        Date nextPayoutDate = addDurationToDate(lastPayoutDate, appServiceTimeProps.getPayoutPeriod());
         Duration payoutPeriod = appServiceTimeProps.getPayoutPeriod();
-        appServiceSchedulerService.runAppServicePayoutTask(apiId, lastPayoutDate, payoutPeriod, this::onPayoutRejected, this::onThreadException);
+        appServiceSchedulerService.runAppServicePayoutTask(apiId, nextPayoutDate, payoutPeriod, this::onPayoutRejected, this::onThreadException);
     }
 
     @Override
@@ -38,10 +39,7 @@ public class CommonApiTaskService implements AppServiceTaskService {
         AppServiceObjectStatus appServiceObjectStatus = appServiceObject.getAppServiceObjectStatus();
         Date statusDate = appServiceObjectStatus.getStatusDate();
         Duration disabledDeletePeriod = appServiceTimeProps.getDeleteDisabledPeriod();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(statusDate);
-        calendar.setTimeInMillis(statusDate.getTime() + disabledDeletePeriod.toMillis());
-        Date execDate = calendar.getTime();
+        Date execDate = addDurationToDate(statusDate, disabledDeletePeriod);
         appServiceSchedulerService.runAppServiceDeletionTask(apiId, execDate, this::onDisabled, this::onThreadException);
     }
 
@@ -58,6 +56,14 @@ public class CommonApiTaskService implements AppServiceTaskService {
     protected void onThreadException(Integer appServiceId) {
         AppServiceObject appServiceObject = appServiceObjectService.getAppServiceObjectById(appServiceId);
         appServiceObjectService.disableAppServiceObject(appServiceObject);
+    }
+
+    private Date addDurationToDate(Date lastPayoutDate, Duration appServiceTimeProps) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(lastPayoutDate);
+        calendar.setTimeInMillis(lastPayoutDate.getTime() + appServiceTimeProps.toMillis());
+        Date nextPayoutDate = calendar.getTime();
+        return nextPayoutDate;
     }
 
 }

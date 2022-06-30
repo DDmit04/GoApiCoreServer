@@ -1,4 +1,4 @@
-package com.goapi.goapi.exception.finances.bill.userBill;
+package com.goapi.goapi.exception.finances.bill;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "User bill not found")
 public class UserBillNotFoundException extends RuntimeException {
 
-    public UserBillNotFoundException(Integer userId) {
-        super(String.format("Bill for user with id = '%s' not found!", userId));
+    public UserBillNotFoundException(Integer billId) {
+        super(String.format("Bill with id = '%s' not found!", billId));
     }
 }

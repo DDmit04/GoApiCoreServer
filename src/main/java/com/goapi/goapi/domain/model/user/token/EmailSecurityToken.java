@@ -27,4 +27,11 @@ public class EmailSecurityToken extends SecurityToken {
 
     public EmailSecurityToken() {
     }
+
+    @Override
+    public String toString() {
+        return "(EmailSecurityToken{" +
+            "confirmingEmail='" + confirmingEmail + '\'' +
+            '}' + super.toString() + ')';
+    }
 }

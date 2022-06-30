@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
 
 public interface AppServiceObjectRepository<T extends AppServiceObject, E extends Serializable> extends JpaRepository<T, E> {
@@ -22,4 +23,10 @@ public interface AppServiceObjectRepository<T extends AppServiceObject, E extend
     @Query(selectAppServiceObjectByIdQuery)
     @EntityGraph("AppServiceObject.owner")
     Optional<AppServiceObject> findAppServiceObjectByIdWithOwner(@Param("appServiceId")Integer appServiceId);
+
+    @Query(selectAppServiceObjectByIdQuery)
+    @EntityGraph("AppServiceObject.owner.bill")
+    Optional<AppServiceObject> findAppServiceObjectByIdWithOwnerAndBill(@Param("appServiceId")Integer appServiceId);
+    @EntityGraph("AppServiceObject.bill.tariff")
+    List<T> findAll();
 }

@@ -48,6 +48,7 @@ public abstract class Payment {
         this.sum = sum;
         this.description = description;
         this.date = new Date();
+        this.status = new PaymentStatus();
     }
 
     public Payment() {
@@ -64,5 +65,16 @@ public abstract class Payment {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Payment{" +
+            "id=" + id +
+            ", date=" + date +
+            ", sum=" + sum +
+            ", description='" + description + '\'' +
+            ", status=" + status +
+            '}';
     }
 }

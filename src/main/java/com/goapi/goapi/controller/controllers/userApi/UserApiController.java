@@ -22,7 +22,7 @@ import java.util.Map;
  * @author Daniil Dmitrochenkov
  **/
 @RestController
-@RequestMapping
+@RequestMapping("/anon")
 @RequiredArgsConstructor
 public class UserApiController {
 
@@ -44,20 +44,15 @@ public class UserApiController {
             RequestMethod.TRACE
         }
     )
-    public ResponseEntity useRequest(@RequestHeader(value = "Authorization", required = false) String apiAuthHeader,
+    public ResponseEntity useRequest(@RequestHeader(value = "key", required = false) String apiKey,
                                      @RequestParam Map<String, String> queryParams,
                                      @RequestBody CallApiRequest callApiRequest) {
         Integer apiId = Integer.valueOf(queryParams.get(userApiIdPathParamName));
         Integer requestId = Integer.valueOf(queryParams.get(requestIdPathParamName));
         HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String method = req.getMethod();
-        String apiKey = extractUserApiKey(apiAuthHeader);
         JsonNode res = userApiRequestServiceFacade.doUserApiRequest(apiId, requestId, method, apiKey, callApiRequest);
         return ResponseEntity.ok(res);
     }
 
-    private String extractUserApiKey(String authHeader) {
-        String apiKey = authHeader.substring(7);
-        return apiKey;
-    }
 }

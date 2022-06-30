@@ -97,4 +97,10 @@ public class UserApi extends AppServiceObject {
         return (UserApiTariff) appServiceTariff;
     }
 
+    @Override
+    public String toString() {
+        return "(UserApi{" +
+            "isProtected=" + isProtected +
+            '}' + super.toString() + ')';
+    }
 }

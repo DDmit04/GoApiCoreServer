@@ -24,8 +24,8 @@ public class UserApiRequestServiceImpl implements UserApiRequestService {
     private final ApiRequestRepository apiRequestRepository;
 
     @Override
-    public UserApiRequest findUserApiRequestByIdWithArguments(Integer apiId, Integer requestId) {
-        Optional<UserApiRequest> userApiRequestOptional = apiRequestRepository.findByIdAndUserApiIdWithArguments(requestId, apiId);
+    public UserApiRequest findUserApiRequestByIdWithArguments(Integer requestId) {
+        Optional<UserApiRequest> userApiRequestOptional = apiRequestRepository.findByIdWithArguments(requestId);
         return userApiRequestOptional.orElseThrow(() -> new UserApiRequestNotFoundException(requestId));
     }
 
@@ -46,6 +46,7 @@ public class UserApiRequestServiceImpl implements UserApiRequestService {
         String requestTemplate = userApiRequestData.getRequestTemplate();
         String requestName = userApiRequestData.getRequestName();
         UserApiRequest newUserApiRequest = new UserApiRequest(userApi, requestName, requestTemplate, httpMethod, userRequestArguments);
+        userRequestArguments.forEach(arg -> arg.setUserApiRequest(newUserApiRequest));
         return apiRequestRepository.save(newUserApiRequest);
     }
 

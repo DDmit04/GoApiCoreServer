@@ -26,4 +26,6 @@ public class PaymentStatus {
         this.paymentStatusType = PaymentStatusType.PROCESSING;
         this.paymentStatusReason = PaymentStatusReason.EMPTY;
     }
+
+
 }

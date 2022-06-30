@@ -4,6 +4,7 @@ import com.goapi.goapi.controller.forms.userApi.request.UserApiRequestData;
 import com.goapi.goapi.domain.model.appService.userApi.UserApi;
 import com.goapi.goapi.domain.model.appService.userApi.request.UserApiRequest;
 import com.goapi.goapi.domain.model.appService.userApi.request.UserApiRequestArgument;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
@@ -12,8 +13,10 @@ import java.util.Set;
 public interface UserApiRequestService {
 
     UserApiRequest findUserApiRequestByIdAndApiId(Integer apiId, Integer requestId);
-    UserApiRequest findUserApiRequestByIdWithArguments(Integer apiId, Integer requestId);
+    UserApiRequest findUserApiRequestByIdWithArguments(Integer requestId);
     void deleteUserApiRequestById(Integer requestId);
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     UserApiRequest createNewRequest(UserApi userApi, UserApiRequestData userApiRequestData, Set<UserApiRequestArgument> userRequestArguments);
     void updateRequestInfo(UserApiRequest userApiRequest, UserApiRequestData userApiRequestData);
 }

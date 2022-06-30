@@ -13,6 +13,8 @@ import com.goapi.goapi.domain.model.appService.userApi.request.RequestArgumentTy
 import com.goapi.goapi.domain.model.appService.userApi.request.UserApiRequest;
 import com.goapi.goapi.domain.model.appService.userApi.request.UserApiRequestArgument;
 import com.goapi.goapi.domain.model.user.User;
+import com.goapi.goapi.exception.appService.database.DatabaseDisabledException;
+import com.goapi.goapi.exception.appService.userApi.UserApiDisabledException;
 import com.goapi.goapi.exception.appService.userApi.request.UserApiRequestKeyException;
 import com.goapi.goapi.exception.appService.userApi.request.UserApiRequestMethodException;
 import com.goapi.goapi.exception.appService.userApi.request.UserApiRequestNotFoundException;
@@ -50,7 +52,7 @@ public class UserApiRequestServiceFacadeImpl implements UserApiRequestServiceFac
 
     @Override
     public UserApiRequestDto createUserApiRequest(User user, Integer apiId, CreateApiRequestRequest createApiRequestRequest) {
-        UserApi userApi = getUserApiByIdCheckOwner(user, apiId);
+        UserApi userApi = getUserApiByIdCheckOwnerWithTariff(user, apiId);
         List<CreateApiRequestArgument> arguments = createApiRequestRequest.getApiRequestArguments();
         userApiRequestValidationService.validateRequestDataOnRequestCreate(userApi, createApiRequestRequest);
         Set<UserApiRequestArgument> userRequestArguments = arguments
@@ -89,8 +91,9 @@ public class UserApiRequestServiceFacadeImpl implements UserApiRequestServiceFac
     @Override
     public JsonNode doUserApiRequest(Integer apiId, Integer requestId, String method, String apiKey, CallApiRequest callApiRequest) {
         UserApi userApi = userApiService.getUserApiById(apiId);
-        UserApiRequest userApiRequest = userApiRequestService.findUserApiRequestByIdWithArguments(apiId, requestId);
+        UserApiRequest userApiRequest = userApiRequestService.findUserApiRequestByIdWithArguments(requestId);
         HttpMethod requestHttpMethod = userApiRequest.getHttpMethod();
+        Integer dbId = userApi.getDatabase().getId();
         boolean databaseDisabled = userApi.getDatabase().getAppServiceObjectStatus().getStatus() == AppServiceStatusType.DISABLED;
         boolean apiIsDisabled = userApi.getAppServiceObjectStatus().getStatus() == AppServiceStatusType.DISABLED;
         boolean anyApiComponentIsDisabled = databaseDisabled || apiIsDisabled;
@@ -102,11 +105,15 @@ public class UserApiRequestServiceFacadeImpl implements UserApiRequestServiceFac
         if (canProcessRequest) {
             Map<String, Object> arguments = callApiRequest.getArguments();
             String databaseQuery = userApiUtilsService.buildUserApiRequestQuery(userApiRequest, arguments);
-            Integer dbId = userApi.getDatabase().getId();
             JsonNode requestResult = externalDatabaseService.sendQuery(dbId, databaseQuery);
             return requestResult;
         } else if (!requestMethodIsMatch) {
             throw new UserApiRequestMethodException(requestId, method);
+        } else if (databaseDisabled) {
+            throw new DatabaseDisabledException(dbId);
+        } else if (apiIsDisabled) {
+            Integer userApiId = userApi.getId();
+            throw new UserApiDisabledException(userApiId);
         } else {
             throw new UserApiRequestKeyException(requestId);
         }
@@ -133,6 +140,12 @@ public class UserApiRequestServiceFacadeImpl implements UserApiRequestServiceFac
 
     private UserApi getUserApiByIdWithRequestsCheckOwner(User user, Integer apiId) {
         UserApi userApi = userApiService.getUserApiByIdWithRequestsAndOwner(apiId);
+        checkUserApiOwner(user, userApi);
+        return userApi;
+    }
+
+    private UserApi getUserApiByIdCheckOwnerWithTariff(User user, Integer apiId) {
+        UserApi userApi = userApiService.getUserApiByIdWithTariffAndOwner(apiId);
         checkUserApiOwner(user, userApi);
         return userApi;
     }

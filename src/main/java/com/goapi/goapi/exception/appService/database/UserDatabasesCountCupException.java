@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * @author Daniil Dmitrochenkov
  **/
-@ResponseStatus(code = HttpStatus.FORBIDDEN, reason = "User databases count is max for any user")
+@ResponseStatus(code = HttpStatus.CONFLICT, reason = "User databases count is max for any user")
 public class UserDatabasesCountCupException extends RuntimeException {
 
     public UserDatabasesCountCupException(Integer userId) {

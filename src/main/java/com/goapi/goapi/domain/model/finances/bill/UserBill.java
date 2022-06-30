@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
@@ -31,13 +30,14 @@ import java.util.Set;
 })
 public class UserBill extends Bill {
 
-    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "userBill", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserPayment> userPayments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "fromUserBill", fetch = FetchType.LAZY)
     private Set<AppServicePayment> appServicePayments = new LinkedHashSet<>();
 
 
+    public UserBill() {
 
+    }
 }

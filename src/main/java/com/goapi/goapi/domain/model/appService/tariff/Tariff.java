@@ -32,10 +32,19 @@ public class Tariff {
     private Integer id;
     @NotBlank(message = "tariff name can't be blank!")
     @Column(nullable = false)
-    private String tariff_name;
+    private String tariffName;
     @NotNull(message = "tariff cost can't be null!")
     @Positive(message = "tariff cost must be positive!")
     @Column(nullable = false, columnDefinition = "decimal default 0")
     @Access(AccessType.PROPERTY)
     private BigDecimal costPerDay;
+
+    @Override
+    public String toString() {
+        return "Tariff{" +
+            "id=" + id +
+            ", tariffName='" + tariffName + '\'' +
+            ", costPerDay=" + costPerDay +
+            '}';
+    }
 }

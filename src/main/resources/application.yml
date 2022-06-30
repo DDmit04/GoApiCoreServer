@@ -64,7 +64,7 @@ thread:
 
 string:
   request-arg-pattern: "{%s}"
-  request-arg-regex: "{%s}"
+  request-arg-regex: "\\{(\\S+)\\}"
   payout-description: "Per day payout from app service bill"
   payment-description-template: "Payment from user '%s' to app service bill with type '%s'"
   invalid-refresh-token: "Refresh token is invalid!"
@@ -75,8 +75,8 @@ limit:
   max-databases-count: 100
 
 time:
-  payout-period: 20s
-  delete-disabled-period: 20s
+  payout-period: 1d
+  delete-disabled-period: 5d
 
 tokens:
   life:

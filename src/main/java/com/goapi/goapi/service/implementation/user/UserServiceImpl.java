@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author Daniil Dmitrochenkov
@@ -29,16 +30,17 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User addNewUser(UserRegForm userRegForm, UserBill userAppServiceBill) {
+    public User addNewUser(UserRegForm userRegForm, UserBill userBill) {
         String username = userRegForm.getUsername();
         String email = userRegForm.getEmail();
         String password = userRegForm.getPassword();
+        String jwtToken = UUID.randomUUID().toString();
         Optional<User> userOptional = userRepo.findUserByUsernameOrEmail(username, email);
         if (!userOptional.isPresent()) {
             String encodedPassword = passwordEncoder.encode(password);
             Set<UserRoles> userRoles = Collections.singleton(UserRoles.USER);
-            User newUser = new User(username, encodedPassword, email, userRoles, userAppServiceBill);
-            return newUser;
+            User newUser = new User(username, encodedPassword, email, userRoles, userBill, jwtToken);
+            return userRepo.save(newUser);
         }
         throw new UserAlreadyExistsException(username, email);
     }

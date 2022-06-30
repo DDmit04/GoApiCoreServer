@@ -2,7 +2,9 @@ package com.goapi.goapi.controller.controllers.user;
 
 import com.goapi.goapi.controller.forms.user.email.UserEmailChangeForm;
 import com.goapi.goapi.controller.forms.user.password.ChangeUserPasswordForm;
+import com.goapi.goapi.domain.dto.finances.userBIll.UserBillDto;
 import com.goapi.goapi.domain.model.user.User;
+import com.goapi.goapi.service.interfaces.facade.finances.UserBillServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.user.UserEmailServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.user.UserPasswordServiceFacade;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,8 @@ public class UserManageController {
 
     private final UserEmailServiceFacade userEmailServiceFacade;
     private final UserPasswordServiceFacade userPasswordServiceFacade;
+    private final UserBillServiceFacade userBillServiceFacade;
+
 
     @PostMapping("/email/change")
     public ResponseEntity changeEmail(@AuthenticationPrincipal User user, @Valid @RequestBody UserEmailChangeForm userEmailChangeForm) {
@@ -43,6 +47,12 @@ public class UserManageController {
     public ResponseEntity changePassword(@AuthenticationPrincipal User user, @Valid @RequestBody ChangeUserPasswordForm changeUserPasswordForm) {
         userPasswordServiceFacade.changePassword(user, changeUserPasswordForm);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/bill")
+    public ResponseEntity<UserBillDto> getUserBill(@AuthenticationPrincipal User user) {
+        UserBillDto userBillDto = userBillServiceFacade.getUserBillDto(user);
+        return ResponseEntity.ok(userBillDto);
     }
 
 }

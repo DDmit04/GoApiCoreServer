@@ -1,21 +1,20 @@
 package com.goapi.goapi.domain.model.finances.bill;
 
-import com.goapi.goapi.domain.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @MappedSuperclass
 @Getter
@@ -31,16 +30,13 @@ public abstract class Bill {
     @Access(AccessType.PROPERTY)
     private BigDecimal moneyLeft;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = true, name = "user_id")
-    private User user;
-
-    public Bill(User user) {
-        this.user = user;
-        this.moneyLeft = BigDecimal.ZERO;
-    }
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Date created;
 
     public Bill() {
+        this.created = new Date();
+        this.moneyLeft = BigDecimal.ZERO;
     }
 
     @Override
@@ -56,5 +52,14 @@ public abstract class Bill {
     @Override
     public int hashCode() {
         return getId() != null ? getId().hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Bill{" +
+            "id=" + id +
+            ", moneyLeft=" + moneyLeft +
+            ", created=" + created +
+            '}';
     }
 }

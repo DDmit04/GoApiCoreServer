@@ -1,14 +1,12 @@
 package com.goapi.goapi.controller.controllers.database;
 
 import com.goapi.goapi.controller.forms.RenameForm;
-import com.goapi.goapi.controller.forms.database.CreateDatabaseForm;
+import com.goapi.goapi.controller.forms.database.CreateDatabaseRequest;
 import com.goapi.goapi.controller.forms.user.PasswordForm;
 import com.goapi.goapi.domain.dto.appServiceobject.database.DatabaseDto;
 import com.goapi.goapi.domain.dto.appServiceobject.database.SummaryDatabaseDto;
 import com.goapi.goapi.domain.model.user.User;
 import com.goapi.goapi.service.interfaces.facade.database.DatabaseServiceFacade;
-import com.goapi.goapi.service.interfaces.facade.finances.AppServiceBillServiceFacade;
-import com.goapi.goapi.service.interfaces.facade.finances.PaymentsServiceFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,11 +32,9 @@ import java.util.List;
 public class DatabaseController {
 
     private final DatabaseServiceFacade databaseServiceFacade;
-    private final AppServiceBillServiceFacade appServiceBillServiceFacade;
-    private final PaymentsServiceFacade paymentsServiceFacade;
 
     @PostMapping
-    public ResponseEntity<SummaryDatabaseDto> createDatabase(@AuthenticationPrincipal User user, @Valid @RequestBody CreateDatabaseForm createDbForm) {
+    public ResponseEntity<SummaryDatabaseDto> createDatabase(@AuthenticationPrincipal User user, @Valid @RequestBody CreateDatabaseRequest createDbForm) {
         DatabaseDto databaseDto = databaseServiceFacade.createNewDatabase(user, createDbForm);
         return ResponseEntity.ok(databaseDto);
     }
