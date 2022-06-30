@@ -2,11 +2,12 @@ package com.goapi.goapi.service.implementation.facade.appService.userApi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.goapi.goapi.controller.forms.userApi.CallApiRequest;
-import com.goapi.goapi.controller.forms.userApi.argument.CreateApiRequestArgument;
 import com.goapi.goapi.controller.forms.userApi.argument.UpdateApiRequestArgument;
-import com.goapi.goapi.controller.forms.userApi.request.CreateApiRequestRequest;
 import com.goapi.goapi.controller.forms.userApi.request.UpdateApiRequestRequest;
+import com.goapi.goapi.controller.forms.userApi.request.UserApiRequestData;
+import com.goapi.goapi.domain.dto.appServiceobject.userApi.UserApiRequestArgumentDto;
 import com.goapi.goapi.domain.dto.appServiceobject.userApi.UserApiRequestDto;
+import com.goapi.goapi.domain.dto.appServiceobject.userApi.summary.SummaryUserApiRequestDto;
 import com.goapi.goapi.domain.model.appService.AppServiceStatusType;
 import com.goapi.goapi.domain.model.appService.userApi.UserApi;
 import com.goapi.goapi.domain.model.appService.userApi.request.RequestArgumentType;
@@ -51,21 +52,12 @@ public class UserApiRequestServiceFacadeImpl implements UserApiRequestServiceFac
     private final UserApiRequestValidationService userApiRequestValidationService;
 
     @Override
-    public UserApiRequestDto createUserApiRequest(User user, Integer apiId, CreateApiRequestRequest createApiRequestRequest) {
+    public SummaryUserApiRequestDto createUserApiRequest(User user, Integer apiId, UserApiRequestData createApiRequestRequest) {
         UserApi userApi = getUserApiByIdCheckOwnerWithTariff(user, apiId);
-        List<CreateApiRequestArgument> arguments = createApiRequestRequest.getApiRequestArguments();
         userApiRequestValidationService.validateRequestDataOnRequestCreate(userApi, createApiRequestRequest);
-        Set<UserApiRequestArgument> userRequestArguments = arguments
-            .stream()
-            .map(arg -> {
-                String argName = arg.getArgName();
-                RequestArgumentType requestArgumentType = arg.getRequestArgumentType();
-                return new UserApiRequestArgument(argName, requestArgumentType);
-            })
-            .collect(Collectors.toSet());
-        UserApiRequest newUserApiRequest = userApiRequestService.createNewRequest(userApi, createApiRequestRequest, userRequestArguments);
-        UserApiRequestDto newUserApiRequestDto = getUserApiRequestDto(newUserApiRequest);
-        return newUserApiRequestDto;
+        UserApiRequest newUserApiRequest = userApiRequestService.createNewRequest(userApi, createApiRequestRequest);
+        SummaryUserApiRequestDto newSummaryUserApiRequestDto = getSummaryUserApiRequestDto(newUserApiRequest);
+        return newSummaryUserApiRequestDto;
     }
 
     @Override
@@ -77,15 +69,15 @@ public class UserApiRequestServiceFacadeImpl implements UserApiRequestServiceFac
     }
 
     @Override
-    public UserApiRequestDto updateUserApiRequest(User user, Integer apiId, UpdateApiRequestRequest updateApiRequestRequest) {
+    public SummaryUserApiRequestDto updateUserApiRequest(User user, Integer apiId, UpdateApiRequestRequest updateApiRequestRequest) {
         Integer requestId = updateApiRequestRequest.getId();
         UserApiRequest userApiRequest = getUserApiRequestByIdCheckOwner(user, apiId, requestId);
         Set<UpdateApiRequestArgument> arguments = updateApiRequestRequest.getApiRequestArguments();
         userApiRequestValidationService.validateRequestDataOnRequestUpdate(updateApiRequestRequest);
         userApiRequestService.updateRequestInfo(userApiRequest, updateApiRequestRequest);
         userApiRequestArgumentService.updateRequestArguments(userApiRequest, arguments);
-        UserApiRequestDto updatedUserApiRequestDto = getUserApiRequestDto(userApiRequest);
-        return updatedUserApiRequestDto;
+        SummaryUserApiRequestDto updatedSummaryUserApiRequestDto = getSummaryUserApiRequestDto(userApiRequest);
+        return updatedSummaryUserApiRequestDto;
     }
 
     @Override
@@ -120,22 +112,22 @@ public class UserApiRequestServiceFacadeImpl implements UserApiRequestServiceFac
     }
 
     @Override
-    public List<UserApiRequestDto> getUserApiRequests(User user, Integer apiId) {
+    public List<SummaryUserApiRequestDto> getUserApiRequests(User user, Integer apiId) {
         UserApi userApi = getUserApiByIdWithRequestsCheckOwner(user, apiId);
         Set<UserApiRequest> userApiRequests = userApi.getUserApiRequests();
-        List<UserApiRequestDto> userApiRequestDtoList = userApiRequests
+        List<SummaryUserApiRequestDto> summaryUserApiRequestDtoList = userApiRequests
             .stream()
-            .map(req -> getUserApiRequestDto(req))
+            .map(req -> getSummaryUserApiRequestDto(req))
             .collect(Collectors.toList());
-        return userApiRequestDtoList;
+        return summaryUserApiRequestDtoList;
     }
 
     @Override
     public UserApiRequestDto getUserApiRequestInfo(User user, Integer apiId, Integer requestId) {
         getUserApiByIdCheckOwner(user, apiId);
-        UserApiRequest userApiRequest = userApiRequestService.findUserApiRequestByIdAndApiId(apiId, requestId);
-        UserApiRequestDto userApiRequestDto = getUserApiRequestDto(userApiRequest);
-        return userApiRequestDto;
+        UserApiRequest userApiRequest = userApiRequestService.findUserApiRequestByIdAndApiIdWithArguments(apiId, requestId);
+        UserApiRequestDto apiRequestArgumentDto = getUserApiRequestDto(userApiRequest);
+        return apiRequestArgumentDto;
     }
 
     private UserApi getUserApiByIdWithRequestsCheckOwner(User user, Integer apiId) {
@@ -171,19 +163,36 @@ public class UserApiRequestServiceFacadeImpl implements UserApiRequestServiceFac
         return userApiRequest;
     }
 
-    private UserApiRequestDto getUserApiRequestDto(UserApiRequest updatedApiRequestRequest) {
+    private SummaryUserApiRequestDto getSummaryUserApiRequestDto(UserApiRequest updatedApiRequestRequest) {
         Integer userApiRequestId = updatedApiRequestRequest.getId();
         String userApiRequestName = updatedApiRequestRequest.getRequestName();
         String userApiRequestTemplate = updatedApiRequestRequest.getRequestTemplate();
         HttpMethod userApiRequestMethod = updatedApiRequestRequest.getHttpMethod();
         String userApiRequestUrl = userApiUtilsService.getUserApiRequestUrl(updatedApiRequestRequest);
-        UserApiRequestDto updatedUserApiRequestDto = new UserApiRequestDto(
+        SummaryUserApiRequestDto updatedSummaryUserApiRequestDto = new SummaryUserApiRequestDto(
             userApiRequestId,
             userApiRequestName,
             userApiRequestTemplate,
             userApiRequestMethod,
             userApiRequestUrl
         );
-        return updatedUserApiRequestDto;
+        return updatedSummaryUserApiRequestDto;
     }
+
+    private UserApiRequestDto getUserApiRequestDto(UserApiRequest userApiRequest) {
+        Set<UserApiRequestArgument> arguments = userApiRequest.getUserApiRequestArguments();
+        List<UserApiRequestArgumentDto> argumentsDto = arguments
+            .stream()
+            .map(arg -> {
+                Integer argId = arg.getId();
+                String argName = arg.getArgName();
+                RequestArgumentType argType = arg.getRequestArgumentType();
+                return new UserApiRequestArgumentDto(argId, argName, argType);
+            })
+            .collect(Collectors.toList());
+        SummaryUserApiRequestDto summaryUserApiRequestDto = getSummaryUserApiRequestDto(userApiRequest);
+        UserApiRequestDto apiRequestArgumentDto = new UserApiRequestDto(summaryUserApiRequestDto, argumentsDto);
+        return apiRequestArgumentDto;
+    }
+
 }

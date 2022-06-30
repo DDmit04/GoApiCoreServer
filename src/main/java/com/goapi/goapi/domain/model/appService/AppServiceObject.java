@@ -75,7 +75,7 @@ public class AppServiceObject {
     @JoinColumn(nullable = false, name = "user_id")
     private User owner;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(nullable = false, name = "bill_id")
     private AppServiceBill appServiceBill;
 

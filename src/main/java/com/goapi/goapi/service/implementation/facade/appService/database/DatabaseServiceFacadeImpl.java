@@ -9,16 +9,18 @@ import com.goapi.goapi.domain.dto.appServiceobject.database.SummaryDatabaseDto;
 import com.goapi.goapi.domain.model.appService.AppServiceObjectStatus;
 import com.goapi.goapi.domain.model.appService.database.Database;
 import com.goapi.goapi.domain.model.appService.tariff.DatabaseTariff;
+import com.goapi.goapi.domain.model.appService.userApi.UserApi;
 import com.goapi.goapi.domain.model.finances.bill.AppServiceBill;
 import com.goapi.goapi.domain.model.user.User;
+import com.goapi.goapi.exception.appService.database.DatabaseDeleteRelationException;
 import com.goapi.goapi.exception.appService.database.UserDatabasesCountCupException;
 import com.goapi.goapi.service.interfaces.appService.AppServiceObjectService;
 import com.goapi.goapi.service.interfaces.appService.database.DatabaseService;
 import com.goapi.goapi.service.interfaces.appService.database.DatabaseTariffService;
+import com.goapi.goapi.service.interfaces.appService.userApi.UserApiService;
 import com.goapi.goapi.service.interfaces.facade.database.DatabaseServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.finances.PaymentsServiceFacade;
 import com.goapi.goapi.service.interfaces.finances.bill.AppServiceBillService;
-import com.goapi.goapi.service.interfaces.finances.bill.UserBillService;
 import com.goapi.goapi.service.interfaces.grpc.ExternalDatabaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +43,7 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
     private final DatabaseTariffService databaseTariffService;
     private final ExternalDatabaseService externalDatabaseService;
     private final AppServiceBillService appServiceBillService;
-    private final UserBillService userBillService;
+    private final UserApiService userApiService;
 
     @Value("${limit.max-databases-count}")
     private int maxDatabasesCount;
@@ -102,6 +104,10 @@ public class DatabaseServiceFacadeImpl implements DatabaseServiceFacade {
     @Override
     public boolean deleteDatabase(User user, Integer dbId) {
         getDatabaseCheckOwner(user, dbId);
+        List<UserApi> userApiList = userApiService.getUserApiOptionalUsingDatabaseWithId(dbId);
+        if (userApiList.size() > 0) {
+            throw new DatabaseDeleteRelationException(dbId);
+        }
         boolean deleted = externalDatabaseService.dropExternalDatabase(dbId);
         if (deleted) {
             databaseService.deleteDatabaseById(dbId);

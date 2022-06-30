@@ -44,6 +44,7 @@ public class DatabaseTariffServiceFacadeImpl implements DatabaseTariffServiceFac
             if (changed) {
                 appServiceObjectService.changeAppServiceObjectTariff(targetDatabase, newTariff);
                 paymentsServiceFacade.makeFirstAppServicePaymentAfterTariffChange(user, targetDatabase);
+                return;
             }
             throw new DatabaseTariffChangeException(targetDatabaseId, newTariffId, currentTariffId);
         }
@@ -70,7 +71,7 @@ public class DatabaseTariffServiceFacadeImpl implements DatabaseTariffServiceFac
             DatabaseStatsDto databaseStats = externalDatabaseService.getDatabaseStats(dbId);
             long newMaxSizeBytes = newTariff.getMaxSizeBytes();
             long currentSize = databaseStats.getCurrentSize();
-            boolean canChange = currentSize >= newMaxSizeBytes;
+            boolean canChange = currentSize <= newMaxSizeBytes;
             return canChange;
         }
         return false;

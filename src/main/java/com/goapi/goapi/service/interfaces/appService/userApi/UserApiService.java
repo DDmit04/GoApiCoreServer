@@ -24,5 +24,5 @@ public interface UserApiService {
     void refreshUserApiKey(UserApi userApi);
     int getUserApiRequestsCountById(Integer userApiId);
     int getTotalUserApisCount(User user);
-
+    List<UserApi> getUserApiOptionalUsingDatabaseWithId(Integer dbId);
 }

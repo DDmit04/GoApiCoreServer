@@ -1,20 +1,20 @@
 package com.goapi.goapi.domain.dto.appServiceobject.userApi;
 
-import lombok.Data;
-import org.springframework.http.HttpMethod;
+import com.goapi.goapi.domain.dto.appServiceobject.userApi.summary.SummaryUserApiRequestDto;
+import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Daniil Dmitrochenkov
  **/
-@Data
-public final class UserApiRequestDto implements Serializable {
-    private final Integer id;
-    private final @NotBlank String requestName;
-    private final @NotBlank String requestTemplate;
-    private final HttpMethod httpMethod;
-    private final String requestUrl;
+@Getter
+public class UserApiRequestDto extends SummaryUserApiRequestDto {
 
+    private final List<UserApiRequestArgumentDto> arguments;
+
+    public UserApiRequestDto(SummaryUserApiRequestDto summaryDto, List<UserApiRequestArgumentDto> arguments) {
+        super(summaryDto.getId(), summaryDto.getRequestName(), summaryDto.getRequestTemplate(), summaryDto.getHttpMethod(), summaryDto.getRequestUrl());
+        this.arguments = arguments;
+    }
 }

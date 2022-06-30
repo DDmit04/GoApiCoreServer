@@ -14,6 +14,6 @@ public class AppServiceObjectDto implements Serializable {
     private final Integer id;
     private final String name;
     private final Date createdAt;
-    private final AppServiceObjectStatusDto appServiceObjectStatusDto;
+    private final AppServiceObjectStatusDto status;
 
 }

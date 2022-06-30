@@ -71,7 +71,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "owner", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<UserApi> userApis = new LinkedHashSet<>();
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(nullable = false, name = "bill_id")
     private UserBill userBill;
 

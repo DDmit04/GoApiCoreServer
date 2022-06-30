@@ -1,4 +1,4 @@
-package com.goapi.goapi.service.implementation.user.mail;
+package com.goapi.goapi.service.implementation.mail;
 
 import com.goapi.goapi.service.interfaces.user.mail.MyMailSender;
 import lombok.RequiredArgsConstructor;

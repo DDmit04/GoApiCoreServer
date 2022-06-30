@@ -12,7 +12,9 @@ import java.util.Optional;
 @Repository
 public interface ApiRequestRepository extends JpaRepository<UserApiRequest, Integer> {
 
-    Optional<UserApiRequest> findByIdAndUserApi_Id(Integer requestId, Integer userApiId);
+    @Query("from UserApiRequest req where req.id = :requestId and req.userApi.id = :userApiId")
+    @EntityGraph("UserApiRequest.arguments")
+    Optional<UserApiRequest> findByIdAndUserApiIdWithArguments(@Param("requestId") Integer requestId, @Param("userApiId") Integer userApiId);
 
     @Query("from UserApiRequest req where req.id = :requestId")
     @EntityGraph("UserApiRequest.arguments")

@@ -2,9 +2,9 @@ package com.goapi.goapi.service.implementation.facade.appService.userApi;
 
 import com.goapi.goapi.controller.forms.userApi.CreateUserApiRequest;
 import com.goapi.goapi.domain.dto.appServiceobject.AppServiceObjectStatusDto;
-import com.goapi.goapi.domain.dto.appServiceobject.userApi.SummaryUserApiDto;
 import com.goapi.goapi.domain.dto.appServiceobject.userApi.UserApiDto;
-import com.goapi.goapi.domain.dto.appServiceobject.userApi.UserApiRequestDto;
+import com.goapi.goapi.domain.dto.appServiceobject.userApi.summary.SummaryUserApiDto;
+import com.goapi.goapi.domain.dto.appServiceobject.userApi.summary.SummaryUserApiRequestDto;
 import com.goapi.goapi.domain.model.appService.AppServiceObjectStatus;
 import com.goapi.goapi.domain.model.appService.database.Database;
 import com.goapi.goapi.domain.model.appService.tariff.UserApiTariff;
@@ -20,7 +20,6 @@ import com.goapi.goapi.service.interfaces.appService.userApi.UserApiUtilsService
 import com.goapi.goapi.service.interfaces.facade.finances.PaymentsServiceFacade;
 import com.goapi.goapi.service.interfaces.facade.userApi.UserApiServiceFacade;
 import com.goapi.goapi.service.interfaces.finances.bill.AppServiceBillService;
-import com.goapi.goapi.service.interfaces.finances.bill.UserBillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
@@ -44,7 +43,6 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
     private final DatabaseService databaseService;
     private final UserApiUtilsService userApiUtilsService;
     private final AppServiceBillService appServiceBillService;
-    private final UserBillService userBillService;
 
     @Value("${limit.max-apis-count}")
     private int userMaxApisCount;
@@ -109,7 +107,7 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
     @Override
     public UserApiDto getUserApiInfo(User user, Integer apiId) {
         UserApi userApi = getUserApiByIdWithRequestsCheckOwner(user, apiId);
-        List<UserApiRequestDto> requestDtoList = userApi.getUserApiRequests()
+        List<SummaryUserApiRequestDto> requestDtoList = userApi.getUserApiRequests()
             .stream()
             .map(req -> {
                 Integer reqId = req.getId();
@@ -117,7 +115,7 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
                 String requestTemplate = req.getRequestTemplate();
                 HttpMethod httpMethod = req.getHttpMethod();
                 String userApiUrl = userApiUtilsService.getUserApiRequestUrl(req);
-                return new UserApiRequestDto(reqId, requestName, requestTemplate, httpMethod, userApiUrl);
+                return new SummaryUserApiRequestDto(reqId, requestName, requestTemplate, httpMethod, userApiUrl);
             })
             .collect(Collectors.toList());
         UserApiDto userApiDto = getUserApiDto(userApi, requestDtoList);
@@ -143,7 +141,7 @@ public class UserApiServiceFacadeImpl implements UserApiServiceFacade {
         return apiDtoList;
     }
 
-    private UserApiDto getUserApiDto(UserApi userApi, List<UserApiRequestDto> requestDtoList) {
+    private UserApiDto getUserApiDto(UserApi userApi, List<SummaryUserApiRequestDto> requestDtoList) {
         Integer userApiId = userApi.getId();
         boolean isUserApiProtected = userApi.isProtected();
         String userApiName = userApi.getName();

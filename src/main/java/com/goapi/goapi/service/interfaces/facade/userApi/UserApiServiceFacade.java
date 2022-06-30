@@ -1,8 +1,8 @@
 package com.goapi.goapi.service.interfaces.facade.userApi;
 
 import com.goapi.goapi.controller.forms.userApi.CreateUserApiRequest;
-import com.goapi.goapi.domain.dto.appServiceobject.userApi.SummaryUserApiDto;
 import com.goapi.goapi.domain.dto.appServiceobject.userApi.UserApiDto;
+import com.goapi.goapi.domain.dto.appServiceobject.userApi.summary.SummaryUserApiDto;
 import com.goapi.goapi.domain.model.user.User;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

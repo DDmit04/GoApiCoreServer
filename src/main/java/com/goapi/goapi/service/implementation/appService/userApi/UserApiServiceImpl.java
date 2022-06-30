@@ -80,6 +80,11 @@ public class UserApiServiceImpl implements UserApiService {
     }
 
     @Override
+    public List<UserApi> getUserApiOptionalUsingDatabaseWithId(Integer dbId) {
+        return userApiRepository.findByDatabase_Id(dbId);
+    }
+
+    @Override
     public UserApi getUserApiByIdWithTariffAndOwner(Integer userApiTariffId) {
         Optional<UserApi> userApi = userApiRepository.findUserApiByIdWithTariffAndOwner(userApiTariffId);
         return userApi.orElseThrow(() -> new UserApiNotFoundException(userApiTariffId));

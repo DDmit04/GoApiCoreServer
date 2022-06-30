@@ -2,7 +2,6 @@ package com.goapi.goapi.domain.model.appService.userApi.request;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +16,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 
 @Entity
 @Table
@@ -42,9 +40,10 @@ public class UserApiRequestArgument {
     private UserApiRequest userApiRequest;
 
 
-    public UserApiRequestArgument(String argName, RequestArgumentType requestArgumentType) {
+    public UserApiRequestArgument(String argName, RequestArgumentType requestArgumentType, UserApiRequest userApiRequest) {
         this.argName = argName;
         this.requestArgumentType = requestArgumentType;
+        this.userApiRequest = userApiRequest;
     }
 
     public UserApiRequestArgument() {
@@ -53,13 +52,20 @@ public class UserApiRequestArgument {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (!(o instanceof UserApiRequestArgument)) return false;
+
         UserApiRequestArgument that = (UserApiRequestArgument) o;
-        return id != null && Objects.equals(id, that.id);
+
+        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
+        if (!getArgName().equals(that.getArgName())) return false;
+        return getRequestArgumentType() == that.getRequestArgumentType();
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + getArgName().hashCode();
+        result = 31 * result + getRequestArgumentType().hashCode();
+        return result;
     }
 }

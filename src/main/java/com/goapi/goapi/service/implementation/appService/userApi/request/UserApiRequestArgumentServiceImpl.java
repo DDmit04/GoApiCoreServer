@@ -1,15 +1,17 @@
 package com.goapi.goapi.service.implementation.appService.userApi.request;
 
 import com.goapi.goapi.controller.forms.userApi.argument.UpdateApiRequestArgument;
+import com.goapi.goapi.domain.model.appService.userApi.request.RequestArgumentType;
 import com.goapi.goapi.domain.model.appService.userApi.request.UserApiRequest;
 import com.goapi.goapi.domain.model.appService.userApi.request.UserApiRequestArgument;
-import com.goapi.goapi.exception.appService.userApi.requestArgument.UserApiRequestArgumentUpdateException;
 import com.goapi.goapi.repo.appService.userApi.ApiRequestArgumentRepository;
 import com.goapi.goapi.service.interfaces.appService.userApi.request.UserApiRequestArgumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,28 +26,63 @@ public class UserApiRequestArgumentServiceImpl implements UserApiRequestArgument
 
     @Override
     public List<UserApiRequestArgument> updateRequestArguments(UserApiRequest userApiRequest, Set<UpdateApiRequestArgument> updatedApiRequestArguments) {
-        Integer requestId = userApiRequest.getId();
-        Set<UserApiRequestArgument> currentUserApiRequestArguments = userApiRequest
-            .getUserApiRequestArguments();
-        List<Integer> updatedArgsIds = updatedApiRequestArguments
+        Set<UserApiRequestArgument> currentUserApiRequestArguments = userApiRequest.getUserApiRequestArguments();
+        Set<UserApiRequestArgument> updatedArguments = getUpdatedUserApiRequestArguments(updatedApiRequestArguments, currentUserApiRequestArguments);
+        Set<UserApiRequestArgument> newArguments = getNewUserApiRequestArguments(userApiRequest, updatedApiRequestArguments);
+        HashSet<UserApiRequestArgument> argumentsToSave = new HashSet<>() {{
+            addAll(newArguments);
+            addAll(updatedArguments);
+        }};
+        return apiRequestArgumentRepository.saveAll(argumentsToSave);
+    }
+
+    private Set<UserApiRequestArgument> getNewUserApiRequestArguments(UserApiRequest userApiRequest, Set<UpdateApiRequestArgument> updatedApiRequestArguments) {
+        Set<UserApiRequestArgument> newArguments = updatedApiRequestArguments
             .stream()
-            .map(arg -> arg.getId())
-            .collect(Collectors.toList());
-        Set<UserApiRequestArgument> updatedArguments = currentUserApiRequestArguments.stream()
-            .map(currentArgument -> {
-                Integer currentArgId = currentArgument.getId();
-                if (updatedArgsIds.contains(currentArgId)) {
-                    UpdateApiRequestArgument updateApiRequestArgument = updatedApiRequestArguments
-                        .stream()
-                        .filter(updatedArgument -> updatedArgument.getId() == currentArgId)
-                        .findFirst()
-                        .get();
-                    currentArgument.setRequestArgumentType(updateApiRequestArgument.getRequestArgumentType());
-                    currentArgument.setArgName(updateApiRequestArgument.getArgName());
-                    return currentArgument;
-                }
-                throw new UserApiRequestArgumentUpdateException(requestId, currentArgId);
+            .filter(newArg -> newArg.getId() == null)
+            .map(newArg -> {
+                String argName = newArg.getArgName();
+                RequestArgumentType requestArgumentType = newArg.getRequestArgumentType();
+                return new UserApiRequestArgument(argName, requestArgumentType, userApiRequest);
+            })
+            .collect(Collectors.toSet());
+        return newArguments;
+    }
+
+    private Set<UserApiRequestArgument> getUpdatedUserApiRequestArguments(Set<UpdateApiRequestArgument> updatedApiRequestArguments, Set<UserApiRequestArgument> currentUserApiRequestArguments) {
+        Set<UserApiRequestArgument> updatedArguments = currentUserApiRequestArguments
+            .stream()
+            .filter(currentArgument -> {
+                Optional<UpdateApiRequestArgument> argumentUpdateData = findUpdateArgumentData(updatedApiRequestArguments, currentArgument);
+                return argumentUpdateData
+                    .map(argUpdateData -> {
+                        updateUserApiRequestArgument(currentArgument, argUpdateData);
+                        return true;
+                    })
+                    .orElse(false);
             }).collect(Collectors.toSet());
-        return apiRequestArgumentRepository.saveAll(updatedArguments);
+        return updatedArguments;
+    }
+
+    private void updateUserApiRequestArgument(UserApiRequestArgument currentArgument, UpdateApiRequestArgument argUpdateData) {
+        RequestArgumentType newArgumentType = argUpdateData.getRequestArgumentType();
+        String newArgName = argUpdateData.getArgName();
+        currentArgument.setRequestArgumentType(newArgumentType);
+        currentArgument.setArgName(newArgName);
+    }
+
+    private Optional<UpdateApiRequestArgument> findUpdateArgumentData(Set<UpdateApiRequestArgument> updatedApiRequestArguments, UserApiRequestArgument currentArgument) {
+        Optional<UpdateApiRequestArgument> argumentUpdateData = updatedApiRequestArguments
+            .stream()
+            .filter(arg -> {
+                Integer updatedArgId = arg.getId();
+                Integer currentArgumentId = currentArgument.getId();
+                boolean argsAreEqual = arg.equals(currentArgument);
+                return updatedArgId != null
+                    && updatedArgId.equals(currentArgumentId)
+                    && !argsAreEqual;
+            })
+            .findFirst();
+        return argumentUpdateData;
     }
 }

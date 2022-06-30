@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -18,6 +19,8 @@ public class UserBillDto extends BaseBillDto implements Serializable {
 
     public UserBillDto(Integer id, BigDecimal moneyLeft, List<BasePaymentDto> userBillPayments, List<BasePaymentDto> appServiceBillPayments) {
         super(id, moneyLeft);
+        userBillPayments.sort(Comparator.comparing(BasePaymentDto::getDate));
+        appServiceBillPayments.sort(Comparator.comparing(BasePaymentDto::getDate));
         this.userBillPayments = userBillPayments;
         this.appServiceBillPayments = appServiceBillPayments;
     }

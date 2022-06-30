@@ -1,4 +1,4 @@
-package com.goapi.goapi.domain.dto.appServiceobject.userApi;
+package com.goapi.goapi.domain.dto.appServiceobject.userApi.summary;
 
 import com.goapi.goapi.domain.dto.appServiceobject.AppServiceObjectDto;
 import com.goapi.goapi.domain.dto.appServiceobject.AppServiceObjectStatusDto;

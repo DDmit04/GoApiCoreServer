@@ -1,10 +1,9 @@
 package com.goapi.goapi.service.implementation.facade.appService.userApi;
 
-import com.goapi.goapi.controller.forms.userApi.argument.CreateApiRequestArgument;
 import com.goapi.goapi.controller.forms.userApi.argument.UpdateApiRequestArgument;
 import com.goapi.goapi.controller.forms.userApi.argument.UserApiRequestArgumentData;
-import com.goapi.goapi.controller.forms.userApi.request.CreateApiRequestRequest;
 import com.goapi.goapi.controller.forms.userApi.request.UpdateApiRequestRequest;
+import com.goapi.goapi.controller.forms.userApi.request.UserApiRequestData;
 import com.goapi.goapi.domain.model.appService.userApi.UserApi;
 import com.goapi.goapi.exception.appService.userApi.request.UserApiRequestArgNotUsedTemplateException;
 import com.goapi.goapi.exception.appService.userApi.request.UserApiRequestsCountCupException;
@@ -36,11 +35,8 @@ public class UserApiRequestValidationServiceImpl implements UserApiRequestValida
     private String requestArgPattern;
 
     @Override
-    public void validateRequestDataOnRequestCreate(UserApi userApi, CreateApiRequestRequest createApiRequestRequest) {
-        List<CreateApiRequestArgument> arguments = createApiRequestRequest.getApiRequestArguments();
-        String requestTemplate = createApiRequestRequest.getRequestTemplate();
+    public void validateRequestDataOnRequestCreate(UserApi userApi, UserApiRequestData userApiRequestData) {
         validateTotalRequestsCount(userApi);
-        validateRequestTemplate(requestTemplate, arguments);
     }
 
     @Override

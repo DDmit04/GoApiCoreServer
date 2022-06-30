@@ -30,10 +30,6 @@ public interface UserApiRepository extends JpaRepository<UserApi, Integer> {
     @EntityGraph("UserApi.owner.requests")
     Optional<UserApi> findUserApiByIdWithOwnerAndRequests(@Param("id") Integer apiId);
 
-    @Query(selectApiByIdQuery)
-    @EntityGraph("UserApi.bill.tariff")
-    Optional<UserApi> findUserApiByIdWithBillAndTariff(@Param("id") Integer apiId);
-
     @Query("select count(ua) " +
         "from UserApi ua " +
         "where ua.owner.id = :userId")
@@ -42,4 +38,6 @@ public interface UserApiRepository extends JpaRepository<UserApi, Integer> {
     @Query(selectApiByIdQuery)
     @EntityGraph("UserApi.owner.tariff")
     Optional<UserApi> findUserApiByIdWithTariffAndOwner(@Param("id")Integer userApiTariffId);
+
+    List<UserApi> findByDatabase_Id(Integer databaseId);
 }

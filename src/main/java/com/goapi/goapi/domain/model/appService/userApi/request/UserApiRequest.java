@@ -63,12 +63,11 @@ public class UserApiRequest {
     @OneToMany(mappedBy = "userApiRequest", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserApiRequestArgument> userApiRequestArguments = new LinkedHashSet<>();
 
-    public UserApiRequest(UserApi userApi, String requestName, String requestTemplate, HttpMethod httpMethod, Set<UserApiRequestArgument> userApiRequestArguments) {
+    public UserApiRequest(UserApi userApi, String requestName, String requestTemplate, HttpMethod httpMethod) {
         this.userApi = userApi;
         this.requestName = requestName;
         this.requestTemplate = requestTemplate;
         this.httpMethod = httpMethod;
-        this.userApiRequestArguments = userApiRequestArguments;
     }
 
     public UserApiRequest() {

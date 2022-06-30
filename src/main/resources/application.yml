@@ -65,7 +65,7 @@ thread:
 string:
   request-arg-pattern: "{%s}"
   request-arg-regex: "\\{(\\S+)\\}"
-  payout-description: "Per day payout from app service bill"
+  payout-description: "Payout from app service bill"
   payment-description-template: "Payment from user '%s' to app service bill with type '%s'"
   invalid-refresh-token: "Refresh token is invalid!"
   thread-prefix: "AppServiceTasksScheduler"
